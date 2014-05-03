@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity implements
             final List<Map<String, String>> itemList) {
         Log.d(TAG, "Call onLoadFinished.");
         for (Map<String, String> itemMap : itemList) {
-            items.add(itemMap.get("title"));
+            items.add(itemMap.get(Constant.TITLE_FIELD));
         }
 
     }
@@ -121,11 +121,11 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public final void onLoaderReset(final Loader<List<Map<String, String>>> arg0) {
         Log.d(TAG, "Call onLoadReset.");
-
     }
 
     @Override
     public final boolean onCreateOptionsMenu(final Menu menu) {
+        Log.d(TAG, "Call onCreateOptionsMenu.");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -133,6 +133,7 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public final boolean onOptionsItemSelected(final MenuItem item) {
+        Log.d(TAG, "Call onOptionsItemSelected.");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -158,6 +159,7 @@ public class MainActivity extends FragmentActivity implements
         public final View onCreateView(final LayoutInflater inflater,
                 final ViewGroup container,
                 final Bundle savedInstanceState) {
+            Log.d(TAG, "Call onCreateView.");
             View rootView = inflater.inflate(R.layout.fragment_main,
                     container, false);
             return rootView;

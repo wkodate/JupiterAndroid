@@ -24,6 +24,8 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
+import com.Ichif1205.jupiter.Constant;
+
 /**
  * AsyncFetcher.
  *
@@ -36,12 +38,6 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
      * ログ.
      */
     private static final String TAG = "AsyncFetcher";
-
-    /**
-     * API取得サーバのURL.
-     */
-    private static final String API_URL = "http://www6178uo.sakura.ne.jp/"
-            + "jupiter/db2json/db2json.php";
 
     /**
      * コネクションタイムアウト時間.
@@ -71,54 +67,89 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
      */
     public AsyncFetcher(final Context context) {
         super(context);
+        Log.d(TAG, "Call Constructor.");
         this.httpClient = new DefaultHttpClient();
     }
 
     @Override
     public final List<Map<String, String>> loadInBackground() {
+        Log.d(TAG, "Call loadInBackground.");
 
         HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), CONNECTION_TIMEOUT);
         HttpConnectionParams.setSoTimeout(httpClient.getParams(), SO_TIMEOUT);
-
-        // Json取得
-        HttpGet httpGet = new HttpGet(API_URL);
+        HttpGet httpGet = new HttpGet(Constant.API_URL);
         try {
             httpResponse = httpClient.execute(httpGet);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (HttpStatus.SC_OK == statusCode) {
-                InputStream inStream = httpResponse.getEntity().getContent();
-                InputStreamReader inStreamReader = new InputStreamReader(inStream);
-                BufferedReader bReader = new BufferedReader(inStreamReader);
-                StringBuilder json = new StringBuilder();
-                String line;
-                while ((line = bReader.readLine()) != null) {
-                    json.append(line);
-                }
-                String jsonString = json.toString();
-                inStream.close();
-                JSONArray jsonArray = new JSONArray(jsonString);
-                List<Map<String, String>> itemList = new ArrayList<Map<String, String>>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    Map<String, String> itemMap = new HashMap<String, String>();
-                    itemMap.put("link", jsonObject.getString("link"));
-                    itemMap.put("title", jsonObject.getString("title"));
-                    itemMap.put("date", jsonObject.getString("date"));
-                    itemMap.put("rss_url", jsonObject.getString("rss_url"));
-                    itemList.add(itemMap);
-                }
+                String jsonString = getContent(httpResponse);
+                List<Map<String, String>> itemList = getItemInfo(jsonString);
                 return itemList;
             } else {
                 Log.d(TAG, Integer.toString(statusCode));
             }
         } catch (ClientProtocolException e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * HTTPレスポンスからコンテンツを取得.
+     *
+     * @param httpRes
+     *            HTTPレスポンス.
+     * @return コンテンツ.
+     */
+    private String getContent(final HttpResponse httpRes) {
+        Log.d(TAG, "Call getContent.");
+        try {
+            InputStream inStream = httpRes.getEntity().getContent();
+            InputStreamReader inStreamReader = new InputStreamReader(inStream);
+            BufferedReader bReader = new BufferedReader(inStreamReader);
+            StringBuilder json = new StringBuilder();
+            String line;
+            while ((line = bReader.readLine()) != null) {
+                json.append(line);
+            }
+            inStream.close();
+            return json.toString();
+        } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * JSON文字列から各Itemの詳細情報を取得.
+     *
+     * @param jsonStr
+     *            JSON文字列.
+     * @return itemList
+     */
+    private List<Map<String, String>> getItemInfo(final String jsonStr) {
+        try {
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            List<Map<String, String>> itemList = new ArrayList<Map<String, String>>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Map<String, String> itemMap = new HashMap<String, String>();
+                itemMap.put("link", jsonObject.getString("link"));
+                itemMap.put("title", jsonObject.getString("title"));
+                itemMap.put("date", jsonObject.getString("date"));
+                itemMap.put("rss_url", jsonObject.getString("rss_url"));
+                itemList.add(itemMap);
+            }
+            return itemList;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
