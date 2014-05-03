@@ -61,6 +61,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
 
+        try {
+            // loaderの初期化
+            getSupportLoaderManager().initLoader(0, null, this);
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         listView = new ListView(this);
         setContentView(listView);
 
@@ -70,9 +78,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
 
         // Adapterを指定
         listView.setAdapter(adapter);
-
-        // loaderの初期化
-        getSupportLoaderManager().initLoader(0, null, this);
 
         // クリックされた時の処理
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,7 +111,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
     }
 
     @Override
-    public void onLoaderReset(final Loader<String> arg0) {
+    public final void onLoaderReset(final Loader<String> arg0) {
         Log.d(TAG, "Call onLoadReset.");
 
     }

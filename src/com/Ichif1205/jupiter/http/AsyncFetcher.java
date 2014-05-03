@@ -12,6 +12,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
@@ -76,9 +79,8 @@ public class AsyncFetcher extends AsyncTaskLoader<String> {
         HttpGet httpGet = new HttpGet(API_URL);
         try {
             httpResponse = httpClient.execute(httpGet);
-            Log.d(TAG, Integer.toString(httpResponse.getStatusLine().getStatusCode()));
             int statusCode = httpResponse.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
+            if (HttpStatus.SC_OK == statusCode) {
                 InputStream inStream = httpResponse.getEntity().getContent();
                 InputStreamReader inStreamReader = new InputStreamReader(inStream);
                 BufferedReader bReader = new BufferedReader(inStreamReader);
@@ -89,13 +91,22 @@ public class AsyncFetcher extends AsyncTaskLoader<String> {
                 }
                 String jsonString = json.toString();
                 inStream.close();
-                Log.d(TAG, jsonString);
+                JSONArray jsonArray = new JSONArray(jsonString);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObj = jsonArray.getJSONObject(i);
+                    Log.d(TAG, jsonObj.getString("link"));
+                    Log.d(TAG, jsonObj.getString("title"));
+                }
                 return jsonString;
+            } else {
+                Log.d(TAG, Integer.toString(statusCode));
             }
 
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
