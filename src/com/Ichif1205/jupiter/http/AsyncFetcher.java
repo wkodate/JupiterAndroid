@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -26,7 +30,7 @@ import android.util.Log;
  * @author wkodate
  *
  */
-public class AsyncFetcher extends AsyncTaskLoader<String> {
+public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
 
     /**
      * ログ.
@@ -36,7 +40,8 @@ public class AsyncFetcher extends AsyncTaskLoader<String> {
     /**
      * API取得サーバのURL.
      */
-    private static final String API_URL = "http://www6178uo.sakura.ne.jp/jupiter/db2json/db2json.php";
+    private static final String API_URL = "http://www6178uo.sakura.ne.jp/"
+            + "jupiter/db2json/db2json.php";
 
     /**
      * コネクションタイムアウト時間.
@@ -70,7 +75,7 @@ public class AsyncFetcher extends AsyncTaskLoader<String> {
     }
 
     @Override
-    public final String loadInBackground() {
+    public final List<Map<String, String>> loadInBackground() {
 
         HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), CONNECTION_TIMEOUT);
         HttpConnectionParams.setSoTimeout(httpClient.getParams(), SO_TIMEOUT);
@@ -92,16 +97,20 @@ public class AsyncFetcher extends AsyncTaskLoader<String> {
                 String jsonString = json.toString();
                 inStream.close();
                 JSONArray jsonArray = new JSONArray(jsonString);
+                List<Map<String, String>> itemList = new ArrayList<Map<String, String>>();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObj = jsonArray.getJSONObject(i);
-                    Log.d(TAG, jsonObj.getString("link"));
-                    Log.d(TAG, jsonObj.getString("title"));
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Map<String, String> itemMap = new HashMap<String, String>();
+                    itemMap.put("link", jsonObject.getString("link"));
+                    itemMap.put("title", jsonObject.getString("title"));
+                    itemMap.put("date", jsonObject.getString("date"));
+                    itemMap.put("rss_url", jsonObject.getString("rss_url"));
+                    itemList.add(itemMap);
                 }
-                return jsonString;
+                return itemList;
             } else {
                 Log.d(TAG, Integer.toString(statusCode));
             }
-
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {

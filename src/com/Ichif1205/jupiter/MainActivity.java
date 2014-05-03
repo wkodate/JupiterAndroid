@@ -2,6 +2,7 @@ package com.Ichif1205.jupiter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -27,12 +28,18 @@ import com.Ichif1205.jupiter.http.AsyncFetcher;
  * @author wkodate
  *
  */
-public class MainActivity extends FragmentActivity implements LoaderCallbacks<String> {
+public class MainActivity extends FragmentActivity implements
+        LoaderCallbacks<List<Map<String, String>>> {
 
     /**
      * ログ.
      */
     private static final String TAG = "MainActivity";
+
+    /**
+     * データ取得時のスリープ.
+     */
+    private static final int SLEEP_TIME = 3000;
 
     /**
      * アイテム.
@@ -51,9 +58,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
         Log.d(TAG, "Call Constructor.");
         // item取得
         items = new ArrayList<String>();
-        items.add("article1");
-        items.add("article2");
-        items.add("article3");
     }
 
     @Override
@@ -64,7 +68,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
         try {
             // loaderの初期化
             getSupportLoaderManager().initLoader(0, null, this);
-            Thread.sleep(3000);
+            Thread.sleep(SLEEP_TIME);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -91,13 +95,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
                 Toast.makeText(getApplicationContext(), item + " clicked ",
                         Toast.LENGTH_LONG).show();
             }
-
         });
 
     }
 
     @Override
-    public final Loader<String> onCreateLoader(final int arg0, final Bundle arg1) {
+    public final Loader<List<Map<String, String>>> onCreateLoader(final int arg0,
+            final Bundle arg1) {
         Log.d(TAG, "Call onCreateLoader.");
         AsyncFetcher asyncFetcher = new AsyncFetcher(this);
         asyncFetcher.forceLoad();
@@ -105,13 +109,17 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<St
     }
 
     @Override
-    public final void onLoadFinished(final Loader<String> arg0, final String arg1) {
+    public final void onLoadFinished(final Loader<List<Map<String, String>>> arg0,
+            final List<Map<String, String>> itemList) {
         Log.d(TAG, "Call onLoadFinished.");
+        for (Map<String, String> itemMap : itemList) {
+            items.add(itemMap.get("title"));
+        }
 
     }
 
     @Override
-    public final void onLoaderReset(final Loader<String> arg0) {
+    public final void onLoaderReset(final Loader<List<Map<String, String>>> arg0) {
         Log.d(TAG, "Call onLoadReset.");
 
     }
