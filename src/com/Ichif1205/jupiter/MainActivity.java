@@ -1,15 +1,25 @@
 package com.Ichif1205.jupiter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.Ichif1205.jupiter.http.AsyncFetcher;
 
 /**
  * MainActivity.
@@ -17,32 +27,92 @@ import android.widget.ListView;
  * @author wkodate
  *
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity implements LoaderCallbacks<String> {
 
-    private final String[] items = { "1", "2", "3", "4" };
+    /**
+     * ログ.
+     */
+    private static final String TAG = "MainActivity";
+
+    /**
+     * アイテム.
+     */
+    private final List<String> items;
+
+    /**
+     * ListView.
+     */
+    private ListView listView;
+
+    /**
+     * コンストラクタ.
+     */
+    public MainActivity() {
+        Log.d(TAG, "Call Constructor.");
+        // item取得
+        items = new ArrayList<String>();
+        items.add("article1");
+        items.add("article2");
+        items.add("article3");
+    }
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "Call onCreate.");
 
-        ListView listView = new ListView(this);
+        listView = new ListView(this);
         setContentView(listView);
 
         // リストビューに入れるアイテムのAdapterを生成
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                R.layout.list_row, items);
 
         // Adapterを指定
-        listView.setAdapter(arrayAdapter);
+        listView.setAdapter(adapter);
 
-        // 選択する要素の指定
-        // listView.setSelection(3);
+        // loaderの初期化
+        getSupportLoaderManager().initLoader(0, null, this);
+
+        // クリックされた時の処理
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(final AdapterView<?> parent,
+                    final View view,
+                    final int position, final long id) {
+                ListView lView = (ListView) parent;
+                String item = (String) lView.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(), item + " clicked ",
+                        Toast.LENGTH_LONG).show();
+            }
+
+        });
+
+    }
+
+    @Override
+    public final Loader<String> onCreateLoader(final int arg0, final Bundle arg1) {
+        Log.d(TAG, "Call onCreateLoader.");
+        AsyncFetcher asyncFetcher = new AsyncFetcher(this);
+        asyncFetcher.forceLoad();
+        return asyncFetcher;
+    }
+
+    @Override
+    public final void onLoadFinished(final Loader<String> arg0, final String arg1) {
+        Log.d(TAG, "Call onLoadFinished.");
+
+    }
+
+    @Override
+    public void onLoaderReset(final Loader<String> arg0) {
+        Log.d(TAG, "Call onLoadReset.");
 
     }
 
     @Override
     public final boolean onCreateOptionsMenu(final Menu menu) {
-
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -80,5 +150,4 @@ public class MainActivity extends ActionBarActivity {
             return rootView;
         }
     }
-
 }
