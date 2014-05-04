@@ -89,10 +89,8 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
                 Log.d(TAG, Integer.toString(statusCode));
             }
         } catch (ClientProtocolException e) {
-            // TODO 自動生成された catch ブロック
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
             e.printStackTrace();
         }
         return null;

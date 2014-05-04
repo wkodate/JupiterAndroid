@@ -56,6 +56,7 @@ public class MainActivity extends FragmentActivity implements
      */
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
+        Log.d(TAG, "HELLO");
         // item取得
         items = new ArrayList<String>();
     }
