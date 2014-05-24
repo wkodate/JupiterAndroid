@@ -15,10 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 
@@ -42,9 +42,14 @@ public class MainActivity extends FragmentActivity implements
     private static final int SLEEP_TIME = 3000;
 
     /**
-     * アイテム.
+     * タイトルのリスト.
      */
-    private final List<String> items;
+    private final List<String> titles;
+
+    /**
+     * リンクのリスト.
+     */
+    private final List<String> links;
 
     /**
      * ListView.
@@ -56,9 +61,9 @@ public class MainActivity extends FragmentActivity implements
      */
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
-        Log.d(TAG, "HELLO");
         // item取得
-        items = new ArrayList<String>();
+        titles = new ArrayList<String>();
+        links = new ArrayList<String>();
     }
 
     @Override
@@ -79,7 +84,7 @@ public class MainActivity extends FragmentActivity implements
 
         // リストビューに入れるアイテムのAdapterを生成
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.list_row, items);
+                R.layout.list_row, titles);
 
         // Adapterを指定
         listView.setAdapter(adapter);
@@ -91,10 +96,12 @@ public class MainActivity extends FragmentActivity implements
             public void onItemClick(final AdapterView<?> parent,
                     final View view,
                     final int position, final long id) {
-                ListView lView = (ListView) parent;
-                String item = (String) lView.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), item + " clicked ",
-                        Toast.LENGTH_LONG).show();
+                Log.d(TAG, "Call onItemClick.");
+                // リンク情報を取得して表示
+                WebView webView = new WebView(view.getContext());
+                String[] urls = links.toArray(new String[links.size()]);
+                // 指定されたURLのロード
+                webView.loadUrl(urls[position]);
             }
         });
 
@@ -114,7 +121,8 @@ public class MainActivity extends FragmentActivity implements
             final List<Map<String, String>> itemList) {
         Log.d(TAG, "Call onLoadFinished.");
         for (Map<String, String> itemMap : itemList) {
-            items.add(itemMap.get(Constant.TITLE_FIELD));
+            titles.add(itemMap.get(Constant.TITLE_FIELD));
+            links.add(itemMap.get(Constant.LINK_FIELD));
         }
 
     }
