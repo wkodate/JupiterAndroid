@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -15,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -50,6 +50,11 @@ public class MainActivity extends FragmentActivity implements
      * リンクのリスト.
      */
     private final List<String> links;
+
+    /**
+     * intentで渡すURLの配列.
+     */
+    private String[] urls;
 
     /**
      * ListView.
@@ -91,20 +96,16 @@ public class MainActivity extends FragmentActivity implements
 
         // クリックされた時の処理
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(final AdapterView<?> parent,
                     final View view,
                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
-                // リンク情報を取得して表示
-                WebView webView = new WebView(view.getContext());
-                String[] urls = links.toArray(new String[links.size()]);
-                // 指定されたURLのロード
-                webView.loadUrl(urls[position]);
+                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+                intent.putExtra("url", urls[position]);
+                startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -124,7 +125,7 @@ public class MainActivity extends FragmentActivity implements
             titles.add(itemMap.get(Constant.TITLE_FIELD));
             links.add(itemMap.get(Constant.LINK_FIELD));
         }
-
+        urls = links.toArray(new String[links.size()]);
     }
 
     @Override

@@ -24,6 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.Ichif1205.jupiter.WebViewActivity">
+        </activity>
     </application>
 
 </manifest>
