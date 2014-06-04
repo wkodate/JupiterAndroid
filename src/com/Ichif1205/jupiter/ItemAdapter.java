@@ -38,24 +38,24 @@ public class ItemAdapter extends ArrayAdapter<ItemData> {
     }
 
     @Override
-    public final View getView(final int position, View convertView,
+    public final View getView(final int position, final View convertView,
             final ViewGroup parent) {
         // この位置のアイテムを取得
         ItemData itemData = getItem(position);
-        if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.item_layout, parent, false);
+        View view = convertView;
+        if (null == convertView) {
+            view = layoutInflater.inflate(R.layout.item_layout, parent, false);
         }
 
         // ItemDataをViewの各widgetにセットする
-        TextView titleView = (TextView) convertView.findViewById(R.id.title);
+        TextView titleView = (TextView) view.findViewById(R.id.title);
         titleView.setText(itemData.getTitle());
-        TextView rssUrlView = (TextView) convertView.findViewById(R.id.rss_url);
-        rssUrlView.setText(itemData.getTitle());
-        TextView dateView = (TextView) convertView.findViewById(R.id.date);
-        dateView.setText(itemData.getTitle());
+        //TextView rssUrlView = (TextView) view.findViewById(R.id.rss_url);
+        //rssUrlView.setText(itemData.getRssUrl());
+        TextView dateView = (TextView) view.findViewById(R.id.date);
+        dateView.setText(itemData.getDate());
 
-        return convertView;
-
+        return view;
     }
 
 }
