@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.Ichif1205.jupiter.http.AsyncFetcher;
@@ -37,61 +36,61 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = "MainActivity";
 
     /**
-     * データ取得時のスリープ.
-     */
-    private static final int SLEEP_TIME = 3000;
-
-    /**
-     * タイトルのリスト.
-     */
-    private final List<String> titles;
-
-    /**
-     * リンクのリスト.
-     */
-    private final List<String> links;
-
-    /**
      * intentで渡すURLの配列.
      */
     private String[] urls;
-
-    /**
-     * ListView.
-     */
-    private ListView listView;
 
     /**
      * コンストラクタ.
      */
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
-        // item取得
-        titles = new ArrayList<String>();
-        links = new ArrayList<String>();
     }
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
+        setTitle(this.getClass().getSimpleName());
+        // loaderの初期化
+        getSupportLoaderManager().initLoader(0, null, this);
 
-        try {
-            // loaderの初期化
-            getSupportLoaderManager().initLoader(0, null, this);
-            Thread.sleep(SLEEP_TIME);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    }
+
+    @Override
+    public final Loader<List<Map<String, String>>> onCreateLoader(final int arg0,
+            final Bundle arg1) {
+        // 新しいLoaderが作成された時に呼ばれる
+        Log.d(TAG, "Call onCreateLoader.");
+        AsyncFetcher asyncFetcher = new AsyncFetcher(this);
+        asyncFetcher.forceLoad();
+        return asyncFetcher;
+    }
+
+    @Override
+    public final void onLoadFinished(final Loader<List<Map<String, String>>> arg0,
+            final List<Map<String, String>> itemList) {
+        // 前に作成したloaderがloadを完了した時に呼ばれる
+        Log.d(TAG, "Call onLoadFinished.");
+        // データ作成
+        List<ItemData> items = new ArrayList<ItemData>();
+        List<String> links = new ArrayList<String>();
+        for (Map<String, String> itemMap : itemList) {
+            ItemData itemData = new ItemData();
+            itemData.setTitle(itemMap.get(Constant.TITLE_FIELD));
+            itemData.setRssUrl(itemMap.get(Constant.RSS_LINK_FIELD));
+            itemData.setDate(itemMap.get(Constant.DATE_FIELD));
+            items.add(itemData);
+            links.add(itemMap.get(Constant.LINK_FIELD));
         }
-
-        listView = new ListView(this);
-        setContentView(listView);
+        urls = links.toArray(new String[links.size()]);
+        setContentView(R.layout.activity_main);
 
         // リストビューに入れるアイテムのAdapterを生成
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.list_row, titles);
+        ItemAdapter adapter = new ItemAdapter(this, 0, items);
 
         // Adapterを指定
+        ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
         // クリックされた時の処理
@@ -109,27 +108,8 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final Loader<List<Map<String, String>>> onCreateLoader(final int arg0,
-            final Bundle arg1) {
-        Log.d(TAG, "Call onCreateLoader.");
-        AsyncFetcher asyncFetcher = new AsyncFetcher(this);
-        asyncFetcher.forceLoad();
-        return asyncFetcher;
-    }
-
-    @Override
-    public final void onLoadFinished(final Loader<List<Map<String, String>>> arg0,
-            final List<Map<String, String>> itemList) {
-        Log.d(TAG, "Call onLoadFinished.");
-        for (Map<String, String> itemMap : itemList) {
-            titles.add(itemMap.get(Constant.TITLE_FIELD));
-            links.add(itemMap.get(Constant.LINK_FIELD));
-        }
-        urls = links.toArray(new String[links.size()]);
-    }
-
-    @Override
     public final void onLoaderReset(final Loader<List<Map<String, String>>> arg0) {
+        // 前に作成したloaderがリセットされた時に呼ばれる
         Log.d(TAG, "Call onLoadReset.");
     }
 
