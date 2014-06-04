@@ -73,6 +73,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
 
     @Override
     public final List<Map<String, String>> loadInBackground() {
+        // バックグラウンドで実行する処理
         Log.d(TAG, "Call loadInBackground.");
 
         HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), CONNECTION_TIMEOUT);

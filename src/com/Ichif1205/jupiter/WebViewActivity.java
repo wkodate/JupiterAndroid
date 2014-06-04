@@ -27,9 +27,9 @@ public class WebViewActivity extends Activity {
     private WebView webView;
 
     /**
-     * 表示数するURL.
+     * 表示するURL.
      */
-    private String url;
+    private String permanentLink;
 
     /**
      * コンストラクタ.
@@ -44,11 +44,11 @@ public class WebViewActivity extends Activity {
         Log.d(TAG, "Call onCreate.");
         setContentView(R.layout.activity_webview);
         // url取得
-        url = getIntentedUrl();
+        permanentLink = getIntentedUrl();
         // リンク情報を表示
         webView = (WebView) findViewById(R.id.webview);
         setStateOfWebView();
-        webView.loadUrl(url);
+        webView.loadUrl(permanentLink);
     }
 
     /**
