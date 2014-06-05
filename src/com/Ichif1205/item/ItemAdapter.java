@@ -1,6 +1,10 @@
-package com.Ichif1205.jupiter;
+package com.Ichif1205.item;
 
 import java.util.List;
+
+import com.Ichif1205.jupiter.R;
+import com.Ichif1205.jupiter.R.id;
+import com.Ichif1205.jupiter.R.layout;
 
 import android.content.Context;
 import android.view.LayoutInflater;

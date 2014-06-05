@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.Ichif1205.item.ItemAdapter;
+import com.Ichif1205.item.ItemData;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 
 /**

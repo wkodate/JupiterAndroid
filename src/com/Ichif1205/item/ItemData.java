@@ -1,4 +1,4 @@
-package com.Ichif1205.jupiter;
+package com.Ichif1205.item;
 
 /**
  * ItemData.
