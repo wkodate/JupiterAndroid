@@ -56,6 +56,8 @@ public class MainActivity extends FragmentActivity implements
         setTitle(this.getClass().getSimpleName());
         // loaderの初期化
         getSupportLoaderManager().initLoader(0, null, this);
+        // プログレスバー
+        setContentView(R.layout.listview_progress_bar);
 
     }
 
