@@ -19,6 +19,11 @@ public final class Constant {
     public static final String LINK_FIELD = "link";
 
     /**
+     * ディスクリプションフィールド.
+     */
+    public static final String DESC_FIELD = "description";
+
+    /**
      * RSSリンクフィールド.
      */
     public static final String RSS_LINK_FIELD = "rss_url";

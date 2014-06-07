@@ -1,4 +1,4 @@
-package com.Ichif1205.item;
+package com.Ichif1205.jupiter.item;
 
 /**
  * ItemData.
@@ -17,6 +17,11 @@ public class ItemData {
      * リンク.
      */
     private String link;
+
+    /**
+     * 概要.
+     */
+    private String description;
 
     /**
      * 画像.
@@ -69,6 +74,25 @@ public class ItemData {
      */
     public final String getLink() {
         return link;
+    }
+
+    /**
+     * 概要をセット.
+     *
+     * @param desc
+     *            概要.
+     */
+    public final void setDescription(final String desc) {
+        description = desc;
+    }
+
+    /**
+     * 概要を取得.
+     *
+     * @return description.
+     */
+    public final String getDescription() {
+        return description;
     }
 
     /**

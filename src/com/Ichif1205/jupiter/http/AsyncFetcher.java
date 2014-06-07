@@ -139,10 +139,10 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Map<String, String> itemMap = new HashMap<String, String>();
-                itemMap.put("link", jsonObject.getString("link"));
-                itemMap.put("title", jsonObject.getString("title"));
-                itemMap.put("date", jsonObject.getString("date"));
-                itemMap.put("rss_url", jsonObject.getString("rss_url"));
+                itemMap.put(Constant.LINK_FIELD, jsonObject.getString(Constant.LINK_FIELD));
+                itemMap.put(Constant.TITLE_FIELD, jsonObject.getString(Constant.TITLE_FIELD));
+                itemMap.put(Constant.DESC_FIELD, jsonObject.getString(Constant.DESC_FIELD));
+                itemMap.put(Constant.RSS_LINK_FIELD, jsonObject.getString(Constant.RSS_LINK_FIELD));
                 itemList.add(itemMap);
             }
             return itemList;

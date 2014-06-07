@@ -19,9 +19,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.Ichif1205.item.ItemAdapter;
-import com.Ichif1205.item.ItemData;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
+import com.Ichif1205.jupiter.item.ItemAdapter;
+import com.Ichif1205.jupiter.item.ItemData;
 
 /**
  * MainActivity.
@@ -83,7 +83,7 @@ public class MainActivity extends FragmentActivity implements
             ItemData itemData = new ItemData();
             itemData.setTitle(itemMap.get(Constant.TITLE_FIELD));
             itemData.setRssUrl(itemMap.get(Constant.RSS_LINK_FIELD));
-            itemData.setDate(itemMap.get(Constant.DATE_FIELD));
+            itemData.setDescription(itemMap.get(Constant.DESC_FIELD));
             items.add(itemData);
             links.add(itemMap.get(Constant.LINK_FIELD));
         }
