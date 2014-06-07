@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 /**
  * WebViewActivity.
@@ -20,6 +23,11 @@ public class WebViewActivity extends Activity {
      * ログ.
      */
     private static final String TAG = "WebViewActivity";
+
+    /**
+     * プログレスバー.
+     */
+    private ProgressBar progressBar;
 
     /**
      * 表示数するURL.
@@ -43,6 +51,7 @@ public class WebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
         setContentView(R.layout.activity_webview);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         // url取得
         permanentLink = getIntentedUrl();
         // リンク情報を表示
@@ -90,6 +99,39 @@ public class WebViewActivity extends Activity {
             public void onReceivedError(final WebView view, final int errorCode,
                     final String description, final String failingUrl) {
             }
+
+            @Override
+            public void onPageStarted(final WebView view, final String url,
+                    final android.graphics.Bitmap bitmap) {
+                // 読み込みを開始した時の処理
+                super.onPageStarted(view, url, bitmap);
+                // プログレスバーを表示
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(final WebView view, final String url) {
+                // 読み込みが完了した時の処理
+                super.onPageFinished(view, url);
+                progressBar.setVisibility(View.GONE);
+            }
+
         });
+        webView.setWebChromeClient(new CustomWebChromeClient());
+    }
+
+    /**
+     * 拡張したWebChromeClient.
+     *
+     * @author wkodate
+     *
+     */
+    protected class CustomWebChromeClient extends WebChromeClient {
+        @Override
+        public final void onProgressChanged(final WebView view, final int progress) {
+            // プログレスバーの進捗を更新
+            progressBar.setProgress(progress);
+        }
+
     }
 }

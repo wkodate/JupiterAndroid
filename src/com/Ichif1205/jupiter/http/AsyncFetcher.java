@@ -4,10 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -21,10 +20,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.Ichif1205.jupiter.Constant;
+import com.Ichif1205.jupiter.item.ItemData;
 
 /**
  * AsyncFetcher.
@@ -32,7 +34,7 @@ import com.Ichif1205.jupiter.Constant;
  * @author wkodate
  *
  */
-public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
+public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
 
     /**
      * ログ.
@@ -72,7 +74,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
     }
 
     @Override
-    public final List<Map<String, String>> loadInBackground() {
+    public final List<ItemData> loadInBackground() {
         // バックグラウンドで実行する処理
         Log.d(TAG, "Call loadInBackground.");
 
@@ -84,8 +86,8 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (HttpStatus.SC_OK == statusCode) {
                 String jsonString = getContent(httpResponse);
-                List<Map<String, String>> itemList = getItemInfo(jsonString);
-                return itemList;
+                List<ItemData> itemDataList = getItemInfo(jsonString);
+                return itemDataList;
             } else {
                 Log.d(TAG, Integer.toString(statusCode));
             }
@@ -130,26 +132,48 @@ public class AsyncFetcher extends AsyncTaskLoader<List<Map<String, String>>> {
      *
      * @param jsonStr
      *            JSON文字列.
+     * @return
      * @return itemList
      */
-    private List<Map<String, String>> getItemInfo(final String jsonStr) {
+    private List<ItemData> getItemInfo(final String jsonStr) {
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
-            List<Map<String, String>> itemList = new ArrayList<Map<String, String>>();
-            for (int i = 0; i < jsonArray.length(); i++) {
+            List<ItemData> itemDataList = new ArrayList<ItemData>();
+            for (int i = 0; i < Constant.ITEM_VIEW_COUNT; i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                Map<String, String> itemMap = new HashMap<String, String>();
-                itemMap.put("link", jsonObject.getString("link"));
-                itemMap.put("title", jsonObject.getString("title"));
-                itemMap.put("date", jsonObject.getString("date"));
-                itemMap.put("rss_url", jsonObject.getString("rss_url"));
-                itemList.add(itemMap);
+                ItemData itemData = new ItemData();
+                itemData.setLink(jsonObject.getString(Constant.LINK_FIELD));
+                itemData.setTitle(jsonObject.getString(Constant.TITLE_FIELD));
+                itemData.setRssTitle(jsonObject.getString(Constant.RSS_TITLE_FIELD));
+                itemData.setDate(jsonObject.getString(Constant.DATE_FIELD));
+                // itemData.setDescription(jsonObject.getString(Constant.DESC_FIELD));
+                // itemData.setImage(convertUrlToBitmap(jsonObject.getString(Constant.IMAGE_FIELD)));
+                itemDataList.add(itemData);
             }
-            return itemList;
+            return itemDataList;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * URLをBitmapに変換.
+     *
+     * @param urlStr
+     *            URL文字列.
+     * @return Bitmap.
+     */
+    private Bitmap convertUrlToBitmap(final String urlStr) {
+        try {
+            InputStream is = new URL(urlStr).openStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+            return bitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

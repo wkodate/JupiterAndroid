@@ -1,4 +1,6 @@
-package com.Ichif1205.jupiter;
+package com.Ichif1205.jupiter.item;
+
+import android.graphics.Bitmap;
 
 /**
  * ItemData.
@@ -19,14 +21,19 @@ public class ItemData {
     private String link;
 
     /**
-     * 画像.
+     * 概要.
      */
-    private String image;
+    private String description;
 
     /**
-     * RSS元のURL.
+     * 画像.
      */
-    private String rssUrl;
+    private Bitmap image;
+
+    /**
+     * RSS元のタイトル.
+     */
+    private String rssTitle;
 
     /**
      * 日付.
@@ -72,12 +79,31 @@ public class ItemData {
     }
 
     /**
+     * 概要をセット.
+     *
+     * @param desc
+     *            概要.
+     */
+    public final void setDescription(final String desc) {
+        description = desc;
+    }
+
+    /**
+     * 概要を取得.
+     *
+     * @return description.
+     */
+    public final String getDescription() {
+        return description;
+    }
+
+    /**
      * 画像をセット.
      *
      * @param i
      *            画像.
      */
-    public final void setImage(final String i) {
+    public final void setImage(final Bitmap i) {
         image = i;
     }
 
@@ -86,27 +112,27 @@ public class ItemData {
      *
      * @return image.
      */
-    public final String getImage() {
+    public final Bitmap getImage() {
         return image;
     }
 
     /**
-     * RSSのURLをセット.
+     * RSSのタイトルをセット.
      *
-     * @param r
-     *            RSSのURL.
+     * @param rt
+     *            RSSのタイトル.
      */
-    public final void setRssUrl(final String r) {
-        rssUrl = r;
+    public final void setRssTitle(final String rt) {
+        rssTitle = rt;
     }
 
     /**
-     * RSSのURLを取得.
+     * RSSのタイトルを取得.
      *
-     * @return rssUrl.
+     * @return rssTitle.
      */
-    public final String getRssUrl() {
-        return rssUrl;
+    public final String getRssTitle() {
+        return rssTitle;
     }
 
     /**
