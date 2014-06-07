@@ -57,6 +57,8 @@ public class ItemAdapter extends ArrayAdapter<ItemData> {
         // ItemDataをViewの各widgetにセットする
         TextView titleView = (TextView) view.findViewById(R.id.title);
         titleView.setText(itemData.getTitle());
+        TextView rssTitleView = (TextView) view.findViewById(R.id.rssTitle);
+        rssTitleView.setText(itemData.getRssTitle());
         TextView dateView = (TextView) view.findViewById(R.id.date);
         dateView.setText(itemData.getDate());
         // TextView descView = (TextView) view.findViewById(R.id.description);

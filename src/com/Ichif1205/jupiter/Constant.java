@@ -24,9 +24,9 @@ public final class Constant {
     public static final String DESC_FIELD = "description";
 
     /**
-     * RSSリンクフィールド.
+     * RSSタイトルフィールド.
      */
-    public static final String RSS_LINK_FIELD = "rss_url";
+    public static final String RSS_TITLE_FIELD = "rss_title";
 
     /**
      * 日付フィールド.
@@ -42,7 +42,6 @@ public final class Constant {
      * 日付フィールド.
      */
     public static final int ITEM_VIEW_COUNT = 20;
-
 
     /**
      * API取得サーバのURL.

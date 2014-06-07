@@ -31,9 +31,9 @@ public class ItemData {
     private Bitmap image;
 
     /**
-     * RSS元のURL.
+     * RSS元のタイトル.
      */
-    private String rssUrl;
+    private String rssTitle;
 
     /**
      * 日付.
@@ -117,22 +117,22 @@ public class ItemData {
     }
 
     /**
-     * RSSのURLをセット.
+     * RSSのタイトルをセット.
      *
-     * @param r
-     *            RSSのURL.
+     * @param rt
+     *            RSSのタイトル.
      */
-    public final void setRssUrl(final String r) {
-        rssUrl = r;
+    public final void setRssTitle(final String rt) {
+        rssTitle = rt;
     }
 
     /**
-     * RSSのURLを取得.
+     * RSSのタイトルを取得.
      *
-     * @return rssUrl.
+     * @return rssTitle.
      */
-    public final String getRssUrl() {
-        return rssUrl;
+    public final String getRssTitle() {
+        return rssTitle;
     }
 
     /**
