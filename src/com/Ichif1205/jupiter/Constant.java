@@ -19,6 +19,11 @@ public final class Constant {
     public static final String LINK_FIELD = "link";
 
     /**
+     * ディスクリプションフィールド.
+     */
+    public static final String DESC_FIELD = "description";
+
+    /**
      * RSSリンクフィールド.
      */
     public static final String RSS_LINK_FIELD = "rss_url";
@@ -32,6 +37,12 @@ public final class Constant {
      * 日付フィールド.
      */
     public static final String IMAGE_FIELD = "image";
+
+    /**
+     * 日付フィールド.
+     */
+    public static final int ITEM_VIEW_COUNT = 20;
+
 
     /**
      * API取得サーバのURL.

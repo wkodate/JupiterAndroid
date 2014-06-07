@@ -1,4 +1,6 @@
-package com.Ichif1205.jupiter;
+package com.Ichif1205.jupiter.item;
+
+import android.graphics.Bitmap;
 
 /**
  * ItemData.
@@ -19,9 +21,14 @@ public class ItemData {
     private String link;
 
     /**
+     * 概要.
+     */
+    private String description;
+
+    /**
      * 画像.
      */
-    private String image;
+    private Bitmap image;
 
     /**
      * RSS元のURL.
@@ -72,12 +79,31 @@ public class ItemData {
     }
 
     /**
+     * 概要をセット.
+     *
+     * @param desc
+     *            概要.
+     */
+    public final void setDescription(final String desc) {
+        description = desc;
+    }
+
+    /**
+     * 概要を取得.
+     *
+     * @return description.
+     */
+    public final String getDescription() {
+        return description;
+    }
+
+    /**
      * 画像をセット.
      *
      * @param i
      *            画像.
      */
-    public final void setImage(final String i) {
+    public final void setImage(final Bitmap i) {
         image = i;
     }
 
@@ -86,7 +112,7 @@ public class ItemData {
      *
      * @return image.
      */
-    public final String getImage() {
+    public final Bitmap getImage() {
         return image;
     }
 
