@@ -1,5 +1,7 @@
 package com.Ichif1205.jupiter.item;
 
+import android.graphics.Bitmap;
+
 /**
  * ItemData.
  *
@@ -26,7 +28,7 @@ public class ItemData {
     /**
      * 画像.
      */
-    private String image;
+    private Bitmap image;
 
     /**
      * RSS元のURL.
@@ -101,7 +103,7 @@ public class ItemData {
      * @param i
      *            画像.
      */
-    public final void setImage(final String i) {
+    public final void setImage(final Bitmap i) {
         image = i;
     }
 
@@ -110,7 +112,7 @@ public class ItemData {
      *
      * @return image.
      */
-    public final String getImage() {
+    public final Bitmap getImage() {
         return image;
     }
 

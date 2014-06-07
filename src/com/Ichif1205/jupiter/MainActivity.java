@@ -2,7 +2,6 @@ package com.Ichif1205.jupiter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -30,7 +29,7 @@ import com.Ichif1205.jupiter.item.ItemData;
  *
  */
 public class MainActivity extends FragmentActivity implements
-        LoaderCallbacks<List<Map<String, String>>> {
+        LoaderCallbacks<List<ItemData>> {
 
     /**
      * ログ.
@@ -62,7 +61,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final Loader<List<Map<String, String>>> onCreateLoader(final int arg0,
+    public final Loader<List<ItemData>> onCreateLoader(final int arg0,
             final Bundle arg1) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
@@ -72,26 +71,21 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final void onLoadFinished(final Loader<List<Map<String, String>>> arg0,
-            final List<Map<String, String>> itemList) {
+    public final void onLoadFinished(final Loader<List<ItemData>> arg0,
+            final List<ItemData> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
         // データ作成
         List<ItemData> items = new ArrayList<ItemData>();
         List<String> links = new ArrayList<String>();
-        for (Map<String, String> itemMap : itemList) {
-            ItemData itemData = new ItemData();
-            itemData.setTitle(itemMap.get(Constant.TITLE_FIELD));
-            itemData.setRssUrl(itemMap.get(Constant.RSS_LINK_FIELD));
-            itemData.setDescription(itemMap.get(Constant.DESC_FIELD));
-            items.add(itemData);
-            links.add(itemMap.get(Constant.LINK_FIELD));
+        for (int i = 0; i < itemDataList.size(); i++) {
+            links.add(itemDataList.get(i).getLink());
         }
         urls = links.toArray(new String[links.size()]);
         setContentView(R.layout.activity_main);
 
         // リストビューに入れるアイテムのAdapterを生成
-        ItemAdapter adapter = new ItemAdapter(this, 0, items);
+        ItemAdapter adapter = new ItemAdapter(this, 0, itemDataList);
 
         // Adapterを指定
         ListView listView = (ListView) findViewById(R.id.listView);
@@ -112,7 +106,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final void onLoaderReset(final Loader<List<Map<String, String>>> arg0) {
+    public final void onLoaderReset(final Loader<List<ItemData>> arg0) {
         // 前に作成したloaderがリセットされた時に呼ばれる
         Log.d(TAG, "Call onLoadReset.");
     }

@@ -20,7 +20,12 @@ import com.Ichif1205.jupiter.R;
 public class ItemAdapter extends ArrayAdapter<ItemData> {
 
     /**
-     *
+     * ログ.
+     */
+    private static final String TAG = "ItemAdapter";
+
+    /**
+     * LayoutInflater.
      */
     private final LayoutInflater layoutInflater;
 
@@ -54,6 +59,8 @@ public class ItemAdapter extends ArrayAdapter<ItemData> {
         titleView.setText(itemData.getTitle());
         TextView descView = (TextView) view.findViewById(R.id.description);
         descView.setText(itemData.getDescription());
+        // ImageView imageView = (ImageView) view.findViewById(R.id.image);
+        // imageView.setImageBitmap(itemData.getImage());
 
         return view;
     }

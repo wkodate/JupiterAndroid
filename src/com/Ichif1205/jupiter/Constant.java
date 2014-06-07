@@ -39,6 +39,12 @@ public final class Constant {
     public static final String IMAGE_FIELD = "image";
 
     /**
+     * 日付フィールド.
+     */
+    public static final int ITEM_VIEW_COUNT = 20;
+
+
+    /**
      * API取得サーバのURL.
      */
     public static final String API_URL = "http://www6178uo.sakura.ne.jp/"
