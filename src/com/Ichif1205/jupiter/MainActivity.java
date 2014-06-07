@@ -76,7 +76,6 @@ public class MainActivity extends FragmentActivity implements
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
         // データ作成
-        List<ItemData> items = new ArrayList<ItemData>();
         List<String> links = new ArrayList<String>();
         for (int i = 0; i < itemDataList.size(); i++) {
             links.add(itemDataList.get(i).getLink());

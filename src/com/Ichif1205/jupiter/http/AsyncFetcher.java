@@ -145,7 +145,8 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
                 itemData.setLink(jsonObject.getString(Constant.LINK_FIELD));
                 itemData.setTitle(jsonObject.getString(Constant.TITLE_FIELD));
                 itemData.setRssUrl(jsonObject.getString(Constant.RSS_LINK_FIELD));
-                itemData.setDescription(jsonObject.getString(Constant.DESC_FIELD));
+                itemData.setDate(jsonObject.getString(Constant.DATE_FIELD));
+                //itemData.setDescription(jsonObject.getString(Constant.DESC_FIELD));
                 //itemData.setImage(convertUrlToBitmap(jsonObject.getString(Constant.IMAGE_FIELD)));
                 itemDataList.add(itemData);
             }
