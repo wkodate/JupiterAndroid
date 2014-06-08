@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
@@ -42,6 +43,11 @@ public class MainActivity extends FragmentActivity implements
     private String[] urls;
 
     /**
+     * intentで渡すtitleの配列.
+     */
+    private String[] titles;
+
+    /**
      * コンストラクタ.
      */
     public MainActivity() {
@@ -52,7 +58,7 @@ public class MainActivity extends FragmentActivity implements
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
-        setTitle(this.getClass().getSimpleName());
+
         // loaderの初期化
         getSupportLoaderManager().initLoader(0, null, this);
         // プログレスバー
@@ -75,12 +81,8 @@ public class MainActivity extends FragmentActivity implements
             final List<ItemData> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
-        // データ作成
-        List<String> links = new ArrayList<String>();
-        for (int i = 0; i < itemDataList.size(); i++) {
-            links.add(itemDataList.get(i).getLink());
-        }
-        urls = links.toArray(new String[links.size()]);
+        // インテントで送るためのデータ作成
+        createIntentData(itemDataList);
         setContentView(R.layout.activity_main);
 
         // リストビューに入れるアイテムのAdapterを生成
@@ -99,6 +101,7 @@ public class MainActivity extends FragmentActivity implements
                 Log.d(TAG, "Call onItemClick.");
                 Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
                 intent.putExtra("url", urls[position]);
+                intent.putExtra("title", titles[position]);
                 startActivity(intent);
             }
         });
@@ -110,24 +113,54 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "Call onLoadReset.");
     }
 
+    /**
+     * インテントのためのデータ生成.
+     *
+     * @param itemDataList
+     *            ItemDataのリスト.
+     */
+    private void createIntentData(final List<ItemData> itemDataList) {
+        List<String> linkList = new ArrayList<String>();
+        List<String> titleList = new ArrayList<String>();
+        for (int i = 0; i < itemDataList.size(); i++) {
+            linkList.add(itemDataList.get(i).getLink());
+            titleList.add(itemDataList.get(i).getTitle());
+        }
+        urls = linkList.toArray(new String[linkList.size()]);
+        titles = titleList.toArray(new String[titleList.size()]);
+    }
+
     @Override
     public final boolean onCreateOptionsMenu(final Menu menu) {
         Log.d(TAG, "Call onCreateOptionsMenu.");
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // menuファイルの読み込み
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        // プロバイダの取得と共有インテントのセット
+        MenuItem actionItem = menu.findItem(R.id.share);
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        // アクションビュー取得前にデフォルトの履歴をセット
+        // actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        actionProvider.setShareIntent(getDefaultShareIntent());
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * 共有用のインテントを返す.
+     *
+     * @return Intent.
+     */
+    private Intent getDefaultShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "#jupiter");
+        return shareIntent;
     }
 
     @Override
     public final boolean onOptionsItemSelected(final MenuItem item) {
         Log.d(TAG, "Call onOptionsItemSelected.");
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 

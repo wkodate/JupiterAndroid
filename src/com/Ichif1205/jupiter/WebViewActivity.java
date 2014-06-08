@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.ShareActionProvider;
 
 /**
  * WebViewActivity.
@@ -40,6 +43,11 @@ public class WebViewActivity extends Activity {
     private String permanentLink;
 
     /**
+     * 表示するタイトル.
+     */
+    private String title;
+
+    /**
      * コンストラクタ.
      */
     public WebViewActivity() {
@@ -50,6 +58,8 @@ public class WebViewActivity extends Activity {
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
+        title = getIntentedTitle();
+        setTitle(title);
         setContentView(R.layout.activity_webview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         // url取得
@@ -61,6 +71,17 @@ public class WebViewActivity extends Activity {
     }
 
     /**
+     * Intentで送られてきたタイトルの取得.
+     *
+     * @return intentで送られてきたタイトル.
+     */
+    private String getIntentedTitle() {
+        Intent intent = getIntent();
+        String intentedTitle = (String) intent.getExtras().get("title");
+        return intentedTitle;
+    }
+
+    /**
      * Intentで送られてきたURLの取得.
      *
      * @return intentで送られてきたURL.
@@ -68,7 +89,6 @@ public class WebViewActivity extends Activity {
     private String getIntentedUrl() {
         Intent intent = getIntent();
         String intentedUrl = (String) intent.getExtras().get("url");
-        Log.i(TAG, intentedUrl);
         return intentedUrl;
     }
 
@@ -132,6 +152,32 @@ public class WebViewActivity extends Activity {
             // プログレスバーの進捗を更新
             progressBar.setProgress(progress);
         }
+    }
 
+    @Override
+    public final boolean onCreateOptionsMenu(final Menu menu) {
+        Log.d(TAG, "Call onCreateOptionsMenu.");
+        // menuファイルの読み込み
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem actionItem = menu.findItem(R.id.share);
+
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        //actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        actionProvider.setShareIntent(getDefaultShareIntent());
+
+        return true;
+    }
+
+    /**
+     * 共有用のインデントを返す.
+     *
+     * @return Intent.
+     */
+    private Intent getDefaultShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, title + ": " + permanentLink + " #jupiter");
+        return shareIntent;
     }
 }
