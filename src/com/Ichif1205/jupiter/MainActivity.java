@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
@@ -30,12 +32,17 @@ import com.Ichif1205.jupiter.item.ItemData;
  *
  */
 public class MainActivity extends FragmentActivity implements
-        LoaderCallbacks<List<ItemData>> {
+        OnScrollListener, LoaderCallbacks<List<ItemData>> {
 
     /**
      * ログ.
      */
     private static final String TAG = "MainActivity";
+
+    /**
+     * ListViewのfooter.
+     */
+    private View listViewFooter;
 
     /**
      * intentで渡すURLの配列.
@@ -48,10 +55,26 @@ public class MainActivity extends FragmentActivity implements
     private String[] titles;
 
     /**
+     * ListView.
+     */
+    private ListView listView;
+
+    /**
+     * ItemAdapter.
+     */
+    private ItemAdapter itemAdapter;
+
+    /**
+     * Fetcher.
+     */
+    private AsyncFetcher asyncFetcher;
+
+    /**
      * コンストラクタ.
      */
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
+        this.listView = null;
     }
 
     @Override
@@ -67,11 +90,11 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final Loader<List<ItemData>> onCreateLoader(final int arg0,
+    public final Loader<List<ItemData>> onCreateLoader(final int itemCount,
             final Bundle arg1) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
-        AsyncFetcher asyncFetcher = new AsyncFetcher(this);
+        asyncFetcher = new AsyncFetcher(this, itemCount);
         asyncFetcher.forceLoad();
         return asyncFetcher;
     }
@@ -83,14 +106,22 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "Call onLoadFinished.");
         // インテントで送るためのデータ作成
         createIntentData(itemDataList);
-        setContentView(R.layout.activity_main);
-
-        // リストビューに入れるアイテムのAdapterを生成
-        ItemAdapter adapter = new ItemAdapter(this, 0, itemDataList);
 
         // Adapterを指定
-        ListView listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
+        if (null == listView) {
+            // リストビューに入れるアイテムのAdapterを生成
+            setContentView(R.layout.activity_main);
+            itemAdapter = new ItemAdapter(this, 0, itemDataList);
+            listView = (ListView) findViewById(R.id.listView);
+            listView.addFooterView(getFooter());
+            listView.setAdapter(itemAdapter);
+            listView.setOnScrollListener(this);
+        } else {
+            // 2回目以降の処理
+            itemAdapter.addAll(itemDataList);
+            listView.invalidate();
+        }
+        asyncFetcher.stopLoading();
 
         // クリックされた時の処理
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -128,6 +159,48 @@ public class MainActivity extends FragmentActivity implements
         }
         urls = linkList.toArray(new String[linkList.size()]);
         titles = titleList.toArray(new String[titleList.size()]);
+    }
+
+    /**
+     * footerを取得.
+     *
+     * @return ListViewのfooter.
+     */
+    private View getFooter() {
+        if (listViewFooter == null) {
+            listViewFooter = getLayoutInflater().inflate(R.layout.listview_progress_bar, null);
+        }
+        return listViewFooter;
+    }
+
+    @Override
+    public final void onScroll(final AbsListView view, final int firstVisibleItem,
+            final int visibleItemCount, final int totalItemCount) {
+        Log.d(TAG, "Call onScroll.");
+        if (totalItemCount == firstVisibleItem + visibleItemCount) {
+            // 読み込み回数が最大値ならスキップ
+            if (totalItemCount >= Constant.MAX_READING_COUNT) {
+                invisibleFooter();
+                return;
+            }
+            // 読み込み中ならスキップ
+            if (asyncFetcher.isStarted()) {
+                return;
+            }
+            getSupportLoaderManager().initLoader(totalItemCount, null, this);
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+
+    }
+
+    /**
+     * Footerを非表示にする.
+     */
+    private void invisibleFooter() {
+        listView.removeFooterView(getFooter());
     }
 
     @Override

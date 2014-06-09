@@ -39,9 +39,14 @@ public final class Constant {
     public static final String IMAGE_FIELD = "image";
 
     /**
-     * 日付フィールド.
+     * Viewで表示するアイテム数.
      */
     public static final int ITEM_VIEW_COUNT = 20;
+
+    /**
+     * 最大読み込み数.
+     */
+    public static final int MAX_READING_COUNT = 100;
 
     /**
      * API取得サーバのURL.
