@@ -62,14 +62,22 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
     private HttpResponse httpResponse;
 
     /**
+     * 読み込んだアイテムの数.
+     */
+    private int readItemCount;
+
+    /**
      * コンストラクタ.
      *
      * @param context
      *            コンテキスト.
+     * @param itemCount
+     *            読み込んだitem数.
      */
-    public AsyncFetcher(final Context context) {
+    public AsyncFetcher(final Context context, final int itemCount) {
         super(context);
         Log.d(TAG, "Call Constructor.");
+        this.readItemCount = itemCount;
         this.httpClient = new DefaultHttpClient();
     }
 
@@ -139,7 +147,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
             List<ItemData> itemDataList = new ArrayList<ItemData>();
-            for (int i = 0; i < Constant.ITEM_VIEW_COUNT; i++) {
+            for (int i = readItemCount; i < readItemCount + Constant.ITEM_VIEW_COUNT; i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 ItemData itemData = new ItemData();
                 itemData.setLink(jsonObject.getString(Constant.LINK_FIELD));
@@ -150,6 +158,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
                 // itemData.setImage(convertUrlToBitmap(jsonObject.getString(Constant.IMAGE_FIELD)));
                 itemDataList.add(itemData);
             }
+            readItemCount += Constant.ITEM_VIEW_COUNT;
             return itemDataList;
         } catch (JSONException e) {
             e.printStackTrace();
