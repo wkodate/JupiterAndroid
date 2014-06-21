@@ -3,6 +3,8 @@ package com.Ichif1205.jupiter;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.maru.mrd.IconCell;
+import jp.maru.mrd.IconLoader;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,6 +43,16 @@ public class MainActivity extends FragmentActivity implements
      * ログ.
      */
     private static final String TAG = "MainActivity";
+
+    /**
+     * 広告のリフレッシュ間隔.
+     */
+    private static final int AD_REFRESH_INTERVAL = 60;
+
+    /**
+     * IconLoader.
+     */
+    private IconLoader<Integer> iconLoader;
 
     /**
      * Tracker.
@@ -100,6 +112,16 @@ public class MainActivity extends FragmentActivity implements
         // プログレスバー
         setContentView(R.layout.listview_progress_bar);
 
+        // 広告の設定
+        // IconLoader を生成
+        // __MEDIA_CODE__ はアプリを表すコード
+        iconLoader = new IconLoader<Integer>("__MEDIA_CODE__", this);
+        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+        iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+
+        // GoogleAnalyticsの設定
         // Get tracker.
         tracker = ((AnalyticsApplication) getApplication()).getTracker(
                 AnalyticsApplication.TrackerName.APP_TRACKER);
@@ -122,6 +144,20 @@ public class MainActivity extends FragmentActivity implements
         super.onStop();
         // トラッキング終了
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
+
+    @Override
+    protected final void onResume() {
+        super.onResume();
+        // 広告の読み込み
+        iconLoader.startLoading();
+    }
+
+    @Override
+    protected final void onPause() {
+        // 広告読み込みの終了
+        iconLoader.stopLoading();
+        super.onPause();
     }
 
     @Override
@@ -166,10 +202,10 @@ public class MainActivity extends FragmentActivity implements
                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
                 tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("setOnItemClickListener")
-                .setAction(urls[position])
-                .setLabel(rssTitles[position])
-                .build());
+                        .setCategory("setOnItemClickListener")
+                        .setAction(urls[position])
+                        .setLabel(rssTitles[position])
+                        .build());
 
                 Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
                 intent.putExtra("url", urls[position]);
