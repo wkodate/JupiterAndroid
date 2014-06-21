@@ -1,18 +1,18 @@
 package com.Ichif1205.jupiter;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.ShareActionProvider;
 
 /**
  * WebViewActivity.
@@ -43,11 +43,6 @@ public class WebViewActivity extends Activity {
     private String permanentLink;
 
     /**
-     * 表示するタイトル.
-     */
-    private String title;
-
-    /**
      * コンストラクタ.
      */
     public WebViewActivity() {
@@ -58,27 +53,19 @@ public class WebViewActivity extends Activity {
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
-        title = getIntentedTitle();
-        setTitle(title);
         setContentView(R.layout.activity_webview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
         // url取得
         permanentLink = getIntentedUrl();
         // リンク情報を表示
         webView = (WebView) findViewById(R.id.webview);
         setStateOfWebView();
         webView.loadUrl(permanentLink);
-    }
 
-    /**
-     * Intentで送られてきたタイトルの取得.
-     *
-     * @return intentで送られてきたタイトル.
-     */
-    private String getIntentedTitle() {
-        Intent intent = getIntent();
-        String intentedTitle = (String) intent.getExtras().get("title");
-        return intentedTitle;
+        setWebViewButton();
+
     }
 
     /**
@@ -154,30 +141,38 @@ public class WebViewActivity extends Activity {
         }
     }
 
-    @Override
-    public final boolean onCreateOptionsMenu(final Menu menu) {
-        Log.d(TAG, "Call onCreateOptionsMenu.");
-        // menuファイルの読み込み
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem actionItem = menu.findItem(R.id.share);
-
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
-        //actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        actionProvider.setShareIntent(getDefaultShareIntent());
-
-        return true;
-    }
-
     /**
-     * 共有用のインデントを返す.
-     *
-     * @return Intent.
+     * WebView用のボタンをセット.
      */
-    private Intent getDefaultShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, title + ": " + permanentLink + " #jupiter");
-        return shareIntent;
+    private void setWebViewButton() {
+
+        // 戻るボタンの設定
+        ImageButton backButton = (ImageButton) findViewById(R.id.backward);
+        backButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                webView.goBack();
+            }
+        });
+
+        // 進むボタンの設定
+        ImageButton forwardButton = (ImageButton) findViewById(R.id.forward);
+        forwardButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                webView.goForward();
+            }
+        });
+
+        // 更新ボタンの設定
+        ImageButton reloadButton = (ImageButton) findViewById(R.id.reload);
+        reloadButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                webView.reload();
+            }
+        });
+
     }
+
 }
