@@ -1,18 +1,22 @@
 package com.Ichif1205.jupiter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.ShareActionProvider;
 
 /**
  * WebViewActivity.
@@ -33,19 +37,24 @@ public class WebViewActivity extends Activity {
     private ProgressBar progressBar;
 
     /**
-     * 表示数するURL.
+     * WebView.
      */
     private WebView webView;
 
     /**
-     * 表示するURL.
+     * title.
+     */
+    private String title;
+
+    /**
+     * URL.
      */
     private String permanentLink;
 
     /**
-     * 表示するタイトル.
+     * つぶやく文字列.
      */
-    private String title;
+    private String tweetText;
 
     /**
      * コンストラクタ.
@@ -58,16 +67,21 @@ public class WebViewActivity extends Activity {
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
-        title = getIntentedTitle();
-        setTitle(title);
         setContentView(R.layout.activity_webview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
+        // title取得
+        title = getIntentedTitle();
         // url取得
         permanentLink = getIntentedUrl();
         // リンク情報を表示
         webView = (WebView) findViewById(R.id.webview);
         setStateOfWebView();
         webView.loadUrl(permanentLink);
+
+        setTweetText();
+        setWebViewButton();
     }
 
     /**
@@ -154,30 +168,60 @@ public class WebViewActivity extends Activity {
         }
     }
 
-    @Override
-    public final boolean onCreateOptionsMenu(final Menu menu) {
-        Log.d(TAG, "Call onCreateOptionsMenu.");
-        // menuファイルの読み込み
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem actionItem = menu.findItem(R.id.share);
+    /**
+     * WebView用のボタンをセット.
+     */
+    private void setWebViewButton() {
 
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
-        //actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        actionProvider.setShareIntent(getDefaultShareIntent());
+        // 戻るボタンの設定
+        ImageButton backButton = (ImageButton) findViewById(R.id.backward);
+        backButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                webView.goBack();
+            }
+        });
 
-        return true;
+        // 進むボタンの設定
+        ImageButton forwardButton = (ImageButton) findViewById(R.id.forward);
+        forwardButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                webView.goForward();
+            }
+        });
+
+        // 更新ボタンの設定
+        ImageButton reloadButton = (ImageButton) findViewById(R.id.reload);
+        reloadButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                webView.reload();
+            }
+        });
+
+        // 共有ボタンの設定
+        ImageButton twitterButton = (ImageButton) findViewById(R.id.twitter);
+        twitterButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                String url = "http://twitter.com/share?text=" + tweetText;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+
     }
 
     /**
-     * 共有用のインデントを返す.
-     *
-     * @return Intent.
+     * つぶやく文字列を作成.
      */
-    private Intent getDefaultShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, title + ": " + permanentLink + " #jupiter");
-        return shareIntent;
+    private void setTweetText() {
+        try {
+            tweetText = URLEncoder.encode(title + " " + permanentLink + " #jupiter", "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
+
 }
