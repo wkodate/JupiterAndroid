@@ -24,6 +24,9 @@ import android.widget.ShareActionProvider;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
 import com.Ichif1205.jupiter.item.ItemData;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * MainActivity.
@@ -40,6 +43,11 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = "MainActivity";
 
     /**
+     * Tracker.
+     */
+    private Tracker tracker;
+
+    /**
      * ListViewのfooter.
      */
     private View listViewFooter;
@@ -53,6 +61,11 @@ public class MainActivity extends FragmentActivity implements
      * intentで渡すtitleの配列.
      */
     private String[] titles;
+
+    /**
+     * rssTitleの配列.
+     */
+    private String[] rssTitles;
 
     /**
      * ListView.
@@ -87,6 +100,28 @@ public class MainActivity extends FragmentActivity implements
         // プログレスバー
         setContentView(R.layout.listview_progress_bar);
 
+        // Get tracker.
+        tracker = ((AnalyticsApplication) getApplication()).getTracker(
+                AnalyticsApplication.TrackerName.APP_TRACKER);
+        // Set screen name.
+        tracker.setScreenName("MainActivity");
+        // Send a screen view.
+        tracker.send(new HitBuilders.AppViewBuilder().build());
+
+    }
+
+    @Override
+    protected final void onStart() {
+        super.onStart();
+        // トラッキング開始
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
+    protected final void onStop() {
+        super.onStop();
+        // トラッキング終了
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
@@ -130,6 +165,12 @@ public class MainActivity extends FragmentActivity implements
                     final View view,
                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
+                tracker.send(new HitBuilders.EventBuilder()
+                .setCategory("setOnItemClickListener")
+                .setAction(urls[position])
+                .setLabel(rssTitles[position])
+                .build());
+
                 Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
                 intent.putExtra("url", urls[position]);
                 intent.putExtra("title", titles[position]);
@@ -153,12 +194,15 @@ public class MainActivity extends FragmentActivity implements
     private void createIntentData(final List<ItemData> itemDataList) {
         List<String> linkList = new ArrayList<String>();
         List<String> titleList = new ArrayList<String>();
+        List<String> rssTitleList = new ArrayList<String>();
         for (int i = 0; i < itemDataList.size(); i++) {
             linkList.add(itemDataList.get(i).getLink());
             titleList.add(itemDataList.get(i).getTitle());
+            rssTitleList.add(itemDataList.get(i).getRssTitle());
         }
         urls = linkList.toArray(new String[linkList.size()]);
         titles = titleList.toArray(new String[titleList.size()]);
+        rssTitles = rssTitleList.toArray(new String[rssTitleList.size()]);
     }
 
     /**
@@ -212,7 +256,6 @@ public class MainActivity extends FragmentActivity implements
         MenuItem actionItem = menu.findItem(R.id.share);
         ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
         // アクションビュー取得前にデフォルトの履歴をセット
-        // actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
         actionProvider.setShareIntent(getDefaultShareIntent());
 
         return super.onCreateOptionsMenu(menu);
@@ -258,4 +301,5 @@ public class MainActivity extends FragmentActivity implements
             return rootView;
         }
     }
+
 }
