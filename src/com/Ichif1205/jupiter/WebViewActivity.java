@@ -1,8 +1,12 @@
 package com.Ichif1205.jupiter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,14 +37,24 @@ public class WebViewActivity extends Activity {
     private ProgressBar progressBar;
 
     /**
-     * 表示数するURL.
+     * WebView.
      */
     private WebView webView;
 
     /**
-     * 表示するURL.
+     * title.
+     */
+    private String title;
+
+    /**
+     * URL.
      */
     private String permanentLink;
+
+    /**
+     * つぶやく文字列.
+     */
+    private String tweetText;
 
     /**
      * コンストラクタ.
@@ -57,6 +71,8 @@ public class WebViewActivity extends Activity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ActionBar actionBar = getActionBar();
         actionBar.hide();
+        // title取得
+        title = getIntentedTitle();
         // url取得
         permanentLink = getIntentedUrl();
         // リンク情報を表示
@@ -64,8 +80,19 @@ public class WebViewActivity extends Activity {
         setStateOfWebView();
         webView.loadUrl(permanentLink);
 
+        setTweetText();
         setWebViewButton();
+    }
 
+    /**
+     * Intentで送られてきたタイトルの取得.
+     *
+     * @return intentで送られてきたタイトル.
+     */
+    private String getIntentedTitle() {
+        Intent intent = getIntent();
+        String intentedTitle = (String) intent.getExtras().get("title");
+        return intentedTitle;
     }
 
     /**
@@ -173,6 +200,28 @@ public class WebViewActivity extends Activity {
             }
         });
 
+        // 共有ボタンの設定
+        ImageButton twitterButton = (ImageButton) findViewById(R.id.twitter);
+        twitterButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                String url = "http://twitter.com/share?text=" + tweetText;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    /**
+     * つぶやく文字列を作成.
+     */
+    private void setTweetText() {
+        try {
+            tweetText = URLEncoder.encode(title + " " + permanentLink + " #jupiter", "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
 }
