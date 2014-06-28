@@ -55,11 +55,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     private Tracker tracker;
 
     /**
-     * ListViewのfooter.
-     */
-    private View listViewFooter;
-
-    /**
      * intentで渡すURLの配列.
      */
     private String[] urls;
@@ -107,15 +102,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         // プログレスバー
         setContentView(R.layout.listview_progress_bar);
 
-        // 広告の設定
-        // IconLoader を生成
-        // __MEDIA_CODE__ はアプリを表すコード
-        iconLoader = new IconLoader<Integer>("__MEDIA_CODE__", this);
-        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
-        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
-        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
-        iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
-
         // GoogleAnalyticsの設定
         // Get tracker.
         tracker = ((AnalyticsApplication) getApplication()).getTracker(
@@ -144,7 +130,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     protected final void onResume() {
         super.onResume();
         // 広告の読み込み
-        iconLoader.startLoading();
+        if (iconLoader != null) {
+            iconLoader.startLoading();
+        }
     }
 
     @Override
@@ -176,6 +164,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         // リストビューに入れるアイテムのAdapterを生成
         setContentView(R.layout.activity_main);
 
+        // 広告の設定
+        setAstAd();
+
         itemAdapter = new ItemAdapter(this, 0, itemDataList);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(itemAdapter);
@@ -206,6 +197,23 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     public final void onLoaderReset(final Loader<List<ItemData>> arg0) {
         // 前に作成したloaderがリセットされた時に呼ばれる
         Log.d(TAG, "Call onLoadReset.");
+    }
+
+    /**
+     * アスタのアイコン広告をセット.
+     */
+    public final void setAstAd() {
+        // IconLoader を生成
+        if (iconLoader == null && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
+            iconLoader = new IconLoader<Integer>(Constant.AST_MEDIA_CODE, this);
+            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+        }
+        // 広告の読み込み
+        iconLoader.startLoading();
     }
 
     /**
