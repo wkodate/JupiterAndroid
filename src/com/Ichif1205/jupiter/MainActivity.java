@@ -11,15 +11,11 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
@@ -34,8 +30,7 @@ import com.google.android.gms.analytics.Tracker;
  * @author wkodate
  *
  */
-public class MainActivity extends FragmentActivity implements
-        OnScrollListener, LoaderCallbacks<List<ItemData>> {
+public class MainActivity extends FragmentActivity implements LoaderCallbacks<List<ItemData>> {
 
     /**
      * ログ.
@@ -107,7 +102,6 @@ public class MainActivity extends FragmentActivity implements
         tracker.setScreenName("MainActivity");
         // Send a screen view.
         tracker.send(new HitBuilders.AppViewBuilder().build());
-
     }
 
     @Override
@@ -143,19 +137,12 @@ public class MainActivity extends FragmentActivity implements
         createIntentData(itemDataList);
 
         // Adapterを指定
-        if (null == listView) {
-            // リストビューに入れるアイテムのAdapterを生成
-            setContentView(R.layout.activity_main);
-            itemAdapter = new ItemAdapter(this, 0, itemDataList);
-            listView = (ListView) findViewById(R.id.listView);
-            listView.addFooterView(getFooter());
-            listView.setAdapter(itemAdapter);
-            listView.setOnScrollListener(this);
-        } else {
-            // 2回目以降の処理
-            itemAdapter.addAll(itemDataList);
-            listView.invalidate();
-        }
+        // リストビューに入れるアイテムのAdapterを生成
+        setContentView(R.layout.activity_main);
+
+        itemAdapter = new ItemAdapter(this, 0, itemDataList);
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(itemAdapter);
         asyncFetcher.stopLoading();
 
         // クリックされた時の処理
@@ -166,10 +153,10 @@ public class MainActivity extends FragmentActivity implements
                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
                 tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("setOnItemClickListener")
-                .setAction(urls[position])
-                .setLabel(rssTitles[position])
-                .build());
+                        .setCategory("setOnItemClickListener")
+                        .setAction(urls[position])
+                        .setLabel(rssTitles[position])
+                        .build());
 
                 Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
                 intent.putExtra("url", urls[position]);
@@ -203,75 +190,6 @@ public class MainActivity extends FragmentActivity implements
         urls = linkList.toArray(new String[linkList.size()]);
         titles = titleList.toArray(new String[titleList.size()]);
         rssTitles = rssTitleList.toArray(new String[rssTitleList.size()]);
-    }
-
-    /**
-     * footerを取得.
-     *
-     * @return ListViewのfooter.
-     */
-    private View getFooter() {
-        if (listViewFooter == null) {
-            listViewFooter = getLayoutInflater().inflate(R.layout.listview_progress_bar, null);
-        }
-        return listViewFooter;
-    }
-
-    @Override
-    public final void onScroll(final AbsListView view, final int firstVisibleItem,
-            final int visibleItemCount, final int totalItemCount) {
-        Log.d(TAG, "Call onScroll.");
-        if (totalItemCount == firstVisibleItem + visibleItemCount) {
-            // 読み込み回数が最大値ならスキップ
-            if (totalItemCount >= Constant.MAX_READING_COUNT) {
-                invisibleFooter();
-                return;
-            }
-            // 読み込み中ならスキップ
-            if (asyncFetcher.isStarted()) {
-                return;
-            }
-            getSupportLoaderManager().initLoader(totalItemCount, null, this);
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-
-    }
-
-    /**
-     * Footerを非表示にする.
-     */
-    private void invisibleFooter() {
-        listView.removeFooterView(getFooter());
-    }
-
-    @Override
-    public final boolean onCreateOptionsMenu(final Menu menu) {
-        Log.d(TAG, "Call onCreateOptionsMenu.");
-        // menuファイルの読み込み
-        getMenuInflater().inflate(R.menu.main, menu);
-        // プロバイダの取得と共有インテントのセット
-        MenuItem actionItem = menu.findItem(R.id.share);
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
-        // アクションビュー取得前にデフォルトの履歴をセット
-        actionProvider.setShareIntent(getDefaultShareIntent());
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * 共有用のインテントを返す.
-     *
-     * @return Intent.
-     */
-    private Intent getDefaultShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "#jupiter");
-        return shareIntent;
     }
 
     @Override

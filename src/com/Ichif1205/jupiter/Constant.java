@@ -41,12 +41,7 @@ public final class Constant {
     /**
      * Viewで表示するアイテム数.
      */
-    public static final int ITEM_VIEW_COUNT = 20;
-
-    /**
-     * 最大読み込み数.
-     */
-    public static final int MAX_READING_COUNT = 100;
+    public static final int ITEM_VIEW_COUNT = 50;
 
     /**
      * API取得サーバのURL.
