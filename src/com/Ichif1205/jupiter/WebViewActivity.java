@@ -3,7 +3,6 @@ package com.Ichif1205.jupiter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -69,8 +68,6 @@ public class WebViewActivity extends Activity {
         Log.d(TAG, "Call onCreate.");
         setContentView(R.layout.activity_webview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        ActionBar actionBar = getActionBar();
-        actionBar.hide();
         // title取得
         title = getIntentedTitle();
         // url取得

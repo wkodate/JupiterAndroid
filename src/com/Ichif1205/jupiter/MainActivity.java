@@ -11,13 +11,11 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
@@ -141,6 +139,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         // Adapterを指定
         // リストビューに入れるアイテムのAdapterを生成
         setContentView(R.layout.activity_main);
+
         itemAdapter = new ItemAdapter(this, 0, itemDataList);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(itemAdapter);
@@ -191,33 +190,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         urls = linkList.toArray(new String[linkList.size()]);
         titles = titleList.toArray(new String[titleList.size()]);
         rssTitles = rssTitleList.toArray(new String[rssTitleList.size()]);
-    }
-
-    @Override
-    public final boolean onCreateOptionsMenu(final Menu menu) {
-        Log.d(TAG, "Call onCreateOptionsMenu.");
-        // menuファイルの読み込み
-        getMenuInflater().inflate(R.menu.main, menu);
-        // プロバイダの取得と共有インテントのセット
-        MenuItem actionItem = menu.findItem(R.id.share);
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
-        // アクションビュー取得前にデフォルトの履歴をセット
-        actionProvider.setShareIntent(getDefaultShareIntent());
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * 共有用のインテントを返す.
-     *
-     * @return Intent.
-     */
-    private Intent getDefaultShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "#jupiter");
-        return shareIntent;
     }
 
     @Override
