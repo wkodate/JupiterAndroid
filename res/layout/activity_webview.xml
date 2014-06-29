@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/myCell"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="#EEEEEE"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <view
+            android:id="@+id/myCell1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            class="jp.maru.mrd.IconCell" />
+
+        <view
+            android:id="@+id/myCell2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            class="jp.maru.mrd.IconCell" />
+
+        <view
+            android:id="@+id/myCell3"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            class="jp.maru.mrd.IconCell" />
+
+        <view
+            android:id="@+id/myCell4"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            class="jp.maru.mrd.IconCell" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/myCell"
+        android:indeterminate="false"
+        android:max="100" />
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#EEEEEE"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/backward"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/icon_back" />
+
+        <ImageButton
+            android:id="@+id/forward"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/icon_forward" />
+
+        <ImageButton
+            android:id="@+id/reload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/icon_reload" />
+
+        <ImageButton
+            android:id="@+id/twitter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/icon_twitter" />
+    </LinearLayout>
+
+</RelativeLayout>
