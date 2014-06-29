@@ -3,6 +3,8 @@ package com.Ichif1205.jupiter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import jp.maru.mrd.IconCell;
+import jp.maru.mrd.IconLoader;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,6 +31,16 @@ public class WebViewActivity extends Activity {
      * ログ.
      */
     private static final String TAG = "WebViewActivity";
+
+    /**
+     * 広告のリフレッシュ間隔.
+     */
+    private static final int AD_REFRESH_INTERVAL = 60;
+
+    /**
+     * IconLoader.
+     */
+    private IconLoader<Integer> iconLoader;
 
     /**
      * プログレスバー.
@@ -77,8 +89,28 @@ public class WebViewActivity extends Activity {
         setStateOfWebView();
         webView.loadUrl(permanentLink);
 
+        // 広告をセット
+        setAstAd();
+        // Twitter用のつぶやきテキストをセット
         setTweetText();
+        // アイコンをセット
         setWebViewButton();
+    }
+
+    @Override
+    protected final void onResume() {
+        super.onResume();
+        // 広告の読み込み
+        if (iconLoader != null) {
+            iconLoader.startLoading();
+        }
+    }
+
+    @Override
+    protected final void onPause() {
+        // 広告読み込みの終了
+        iconLoader.stopLoading();
+        super.onPause();
     }
 
     /**
@@ -208,6 +240,23 @@ public class WebViewActivity extends Activity {
             }
         });
 
+    }
+
+    /**
+     * アスタのアイコン広告をセット.
+     */
+    public final void setAstAd() {
+        // IconLoader を生成
+        if (iconLoader == null && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
+            iconLoader = new IconLoader<Integer>(Constant.AST_MEDIA_CODE, this);
+            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+        }
+        // 広告の読み込み
+        iconLoader.startLoading();
     }
 
     /**
