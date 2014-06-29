@@ -4,14 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:max="100" />
-
     <LinearLayout
         android:id="@+id/myCell"
         android:layout_width="fill_parent"
@@ -46,11 +38,20 @@
             class="jp.maru.mrd.IconCell" />
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/myCell"
+        android:indeterminate="false"
+        android:max="100" />
+
     <WebView
         android:id="@+id/webview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/myCell" />
+        android:layout_below="@+id/progressBar" />
 
     <LinearLayout
         android:layout_width="match_parent"
