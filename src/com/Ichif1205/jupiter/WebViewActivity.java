@@ -264,7 +264,7 @@ public class WebViewActivity extends Activity {
      */
     private void setTweetText() {
         try {
-            tweetText = URLEncoder.encode(title + " " + permanentLink + " #jupiter", "UTF-8");
+            tweetText = URLEncoder.encode(title + " " + permanentLink + " #なんJまとめのまとめ", "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
