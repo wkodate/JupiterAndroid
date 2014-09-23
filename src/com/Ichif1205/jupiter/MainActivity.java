@@ -261,7 +261,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "#jupiter");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, Constant.SHARE_TEXT);
         return shareIntent;
     }
 
