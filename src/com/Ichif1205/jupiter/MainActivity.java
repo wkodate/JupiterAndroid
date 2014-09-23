@@ -140,7 +140,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     @Override
     protected final void onPause() {
         // 広告読み込みの終了
-        iconLoader.stopLoading();
+        if (iconLoader != null) {
+            iconLoader.stopLoading();
+        }
         super.onPause();
     }
 
