@@ -354,4 +354,22 @@ public class MainActivity extends FragmentActivity implements
         return webviewIntent;
     }
 
+    /**
+     * listviewを取得.
+     *
+     * @return listView.
+     */
+    public final ListView getListview() {
+        return listView;
+    }
+
+    /**
+     * asyncFetcherを取得.
+     *
+     * @return asyncFetcher.
+     */
+    public final AsyncFetcher getAsyncFetcher() {
+        return asyncFetcher;
+    }
+
 }
