@@ -34,7 +34,8 @@ import com.google.android.gms.analytics.Tracker;
  * @author wkodate
  *
  */
-public class MainActivity extends FragmentActivity implements LoaderCallbacks<List<ItemData>> {
+public class MainActivity extends FragmentActivity implements
+        LoaderCallbacks<List<ItemData>> {
 
     /**
      * ログ.
@@ -47,6 +48,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     private static final int AD_REFRESH_INTERVAL = 60;
 
     /**
+     * インテントの種類.
+     */
+    private static final String INTENT_TYPE = "text/plain";
+
+    /**
      * IconLoader.
      */
     private IconLoader<Integer> iconLoader;
@@ -55,6 +61,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
      * Tracker.
      */
     private Tracker tracker;
+
+    /**
+     * Webviewへ渡すインテント.
+     */
+    private Intent webviewIntent;
 
     /**
      * intentで渡すURLの配列.
@@ -148,7 +159,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
 
     @Override
     public final Loader<List<ItemData>> onCreateLoader(final int itemCount,
-            final Bundle arg1) {
+            final Bundle bundle) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
         asyncFetcher = new AsyncFetcher(this, itemCount);
@@ -157,7 +168,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     }
 
     @Override
-    public final void onLoadFinished(final Loader<List<ItemData>> arg0,
+    public final void onLoadFinished(final Loader<List<ItemData>> loader,
             final List<ItemData> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
@@ -189,10 +200,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
                         .setLabel(rssTitles[position])
                         .build());
 
-                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
-                intent.putExtra("url", urls[position]);
-                intent.putExtra("title", titles[position]);
-                startActivity(intent);
+                webviewIntent = new Intent(getApplicationContext(),
+                        WebViewActivity.class);
+                webviewIntent.putExtra("url", urls[position]);
+                webviewIntent.putExtra("title", titles[position]);
+                startActivity(webviewIntent);
             }
         });
     }
@@ -210,7 +222,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         getMenuInflater().inflate(R.menu.main, menu);
         // プロバイダの取得と共有インテントのセット
         MenuItem actionItem = menu.findItem(R.id.share);
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem
+                .getActionProvider();
         // アクションビュー取得前にデフォルトの履歴をセット
         actionProvider.setShareIntent(getDefaultShareIntent());
 
@@ -222,7 +235,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
      */
     public final void setAstAd() {
         // IconLoader を生成
-        if (iconLoader == null && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
+        if (iconLoader == null
+                && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
             iconLoader = new IconLoader<Integer>(Constant.AST_MEDIA_CODE, this);
             ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
             ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
@@ -240,7 +254,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
      * @param itemDataList
      *            ItemDataのリスト.
      */
-    private void createIntentData(final List<ItemData> itemDataList) {
+    public void createIntentData(final List<ItemData> itemDataList) {
         List<String> linkList = new ArrayList<String>();
         List<String> titleList = new ArrayList<String>();
         List<String> rssTitleList = new ArrayList<String>();
@@ -259,10 +273,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
      *
      * @return Intent.
      */
-    private Intent getDefaultShareIntent() {
+    public Intent getDefaultShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
+        shareIntent.setType(INTENT_TYPE);
         shareIntent.putExtra(Intent.EXTRA_TEXT, Constant.SHARE_TEXT);
         return shareIntent;
     }
@@ -293,6 +307,51 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
                     container, false);
             return rootView;
         }
+    }
+
+    /**
+     * Tracker取得.
+     *
+     * @return tracker.
+     */
+    public final Tracker getTracker() {
+        return tracker;
+    }
+
+    /**
+     * intentで渡すURLの配列を取得.
+     *
+     * @return urls.
+     */
+    public final String[] getUrls() {
+        return urls;
+    }
+
+    /**
+     * intentで渡すタイトルの配列を取得.
+     *
+     * @return titles.
+     */
+    public final String[] getTitles() {
+        return titles;
+    }
+
+    /**
+     * intentで渡すRSSのタイトルの配列を取得.
+     *
+     * @return rssTitles.
+     */
+    public final String[] getRssTitles() {
+        return rssTitles;
+    }
+
+    /**
+     * intent列を取得.
+     *
+     * @return webviewIntent.
+     */
+    public final Intent getWebviewIntent() {
+        return webviewIntent;
     }
 
 }
