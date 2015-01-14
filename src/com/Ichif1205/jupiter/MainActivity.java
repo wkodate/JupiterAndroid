@@ -32,6 +32,7 @@ import com.google.android.gms.analytics.Tracker;
  * MainActivity.
  *
  * @author wkodate
+ * @version 1.0.1
  *
  */
 public class MainActivity extends FragmentActivity implements
@@ -68,19 +69,19 @@ public class MainActivity extends FragmentActivity implements
     private Intent webviewIntent;
 
     /**
-     * intentで渡すURLの配列.
+     * intentで渡すURLのリスト.
      */
-    private String[] urls;
+    private final List<String> urls;
 
     /**
-     * intentで渡すtitleの配列.
+     * intentで渡すtitleのリスト.
      */
-    private String[] titles;
+    private final List<String> titles;
 
     /**
-     * rssTitleの配列.
+     * rssTitleのリスト.
      */
-    private String[] rssTitles;
+    private final List<String> rssTitles;
 
     /**
      * ListView.
@@ -103,6 +104,9 @@ public class MainActivity extends FragmentActivity implements
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
         this.listView = null;
+        this.urls = new ArrayList<>();
+        this.titles = new ArrayList<>();
+        this.rssTitles = new ArrayList<>();
     }
 
     @Override
@@ -196,14 +200,14 @@ public class MainActivity extends FragmentActivity implements
                 Log.d(TAG, "Call onItemClick.");
                 tracker.send(new HitBuilders.EventBuilder()
                         .setCategory("setOnItemClickListener")
-                        .setAction(urls[position])
-                        .setLabel(rssTitles[position])
+                        .setAction(urls.get(position))
+                        .setLabel(rssTitles.get(position))
                         .build());
 
                 webviewIntent = new Intent(getApplicationContext(),
                         WebViewActivity.class);
-                webviewIntent.putExtra("url", urls[position]);
-                webviewIntent.putExtra("title", titles[position]);
+                webviewIntent.putExtra("url", urls.get(position));
+                webviewIntent.putExtra("title", titles.get(position));
                 startActivity(webviewIntent);
             }
         });
@@ -255,17 +259,11 @@ public class MainActivity extends FragmentActivity implements
      *            ItemDataのリスト.
      */
     public void createIntentData(final List<ItemData> itemDataList) {
-        List<String> linkList = new ArrayList<String>();
-        List<String> titleList = new ArrayList<String>();
-        List<String> rssTitleList = new ArrayList<String>();
         for (int i = 0; i < itemDataList.size(); i++) {
-            linkList.add(itemDataList.get(i).getLink());
-            titleList.add(itemDataList.get(i).getTitle());
-            rssTitleList.add(itemDataList.get(i).getRssTitle());
+            urls.add(itemDataList.get(i).getLink());
+            titles.add(itemDataList.get(i).getTitle());
+            rssTitles.add(itemDataList.get(i).getRssTitle());
         }
-        urls = linkList.toArray(new String[linkList.size()]);
-        titles = titleList.toArray(new String[titleList.size()]);
-        rssTitles = rssTitleList.toArray(new String[rssTitleList.size()]);
     }
 
     /**
@@ -319,29 +317,29 @@ public class MainActivity extends FragmentActivity implements
     }
 
     /**
-     * intentで渡すURLの配列を取得.
+     * intentで渡すURLのリストを取得.
      *
      * @return urls.
      */
-    public final String[] getUrls() {
+    public final List<String> getUrls() {
         return urls;
     }
 
     /**
-     * intentで渡すタイトルの配列を取得.
+     * intentで渡すタイトルのリストを取得.
      *
      * @return titles.
      */
-    public final String[] getTitles() {
+    public final List<String> getTitles() {
         return titles;
     }
 
     /**
-     * intentで渡すRSSのタイトルの配列を取得.
+     * intentで渡すRSSのタイトルのリストを取得.
      *
      * @return rssTitles.
      */
-    public final String[] getRssTitles() {
+    public final List<String> getRssTitles() {
         return rssTitles;
     }
 
