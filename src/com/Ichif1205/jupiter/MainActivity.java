@@ -1,6 +1,5 @@
 package com.Ichif1205.jupiter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.maru.mrd.IconCell;
@@ -69,19 +68,9 @@ public class MainActivity extends FragmentActivity implements
     private Intent webviewIntent;
 
     /**
-     * intentで渡すURLのリスト.
+     * intentで渡すItemData.
      */
-    private final List<String> urls;
-
-    /**
-     * intentで渡すtitleのリスト.
-     */
-    private final List<String> titles;
-
-    /**
-     * rssTitleのリスト.
-     */
-    private final List<String> rssTitles;
+    private ItemData item;
 
     /**
      * ListView.
@@ -104,9 +93,7 @@ public class MainActivity extends FragmentActivity implements
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
         this.listView = null;
-        this.urls = new ArrayList<>();
-        this.titles = new ArrayList<>();
-        this.rssTitles = new ArrayList<>();
+        this.item = new ItemData();
     }
 
     @Override
@@ -176,8 +163,6 @@ public class MainActivity extends FragmentActivity implements
             final List<ItemData> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
-        // インテントで送るためのデータ作成
-        createIntentData(itemDataList);
 
         // Adapterを指定
         // リストビューに入れるアイテムのAdapterを生成
@@ -198,13 +183,15 @@ public class MainActivity extends FragmentActivity implements
                     final View view,
                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
+                // position番目のItemDataを取得
+                item = itemDataList.get(position);
                 tracker.send(new HitBuilders.EventBuilder()
                         .setCategory("setOnItemClickListener")
-                        .setAction(urls.get(position))
-                        .setLabel(rssTitles.get(position))
+                        .setAction(item.getLink())
+                        .setLabel(item.getRssTitle())
                         .build());
-                webviewIntent = getWebviewIntent(urls.get(position),
-                        titles.get(position));
+                webviewIntent = getWebviewIntent(item.getLink(),
+                        item.getTitle());
                 startActivity(webviewIntent);
             }
         });
@@ -250,20 +237,6 @@ public class MainActivity extends FragmentActivity implements
     }
 
     /**
-     * インテントのためのデータ生成.
-     *
-     * @param itemDataList
-     *            ItemDataのリスト.
-     */
-    public final void createIntentData(final List<ItemData> itemDataList) {
-        for (int i = 0; i < itemDataList.size(); i++) {
-            urls.add(itemDataList.get(i).getLink());
-            titles.add(itemDataList.get(i).getTitle());
-            rssTitles.add(itemDataList.get(i).getRssTitle());
-        }
-    }
-
-    /**
      * シェア用のインテントを返す.
      *
      * @return Intent.
@@ -282,7 +255,8 @@ public class MainActivity extends FragmentActivity implements
      * @param url
      *            URL.
      * @param title
-     *            タイトル
+     *            タイトル.
+     * @return webview intent
      */
     public final Intent getWebviewIntent(final String url, final String title) {
         Intent intent = new Intent(getApplicationContext(),
@@ -293,9 +267,9 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final boolean onOptionsItemSelected(final MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem menuitem) {
         Log.d(TAG, "Call onOptionsItemSelected.");
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(menuitem);
     }
 
     /**
@@ -330,30 +304,12 @@ public class MainActivity extends FragmentActivity implements
     }
 
     /**
-     * intentで渡すURLのリストを取得.
+     * intentで渡すItemDataを取得.
      *
-     * @return urls.
+     * @return item.
      */
-    public final List<String> getUrls() {
-        return urls;
-    }
-
-    /**
-     * intentで渡すタイトルのリストを取得.
-     *
-     * @return titles.
-     */
-    public final List<String> getTitles() {
-        return titles;
-    }
-
-    /**
-     * intentで渡すRSSのタイトルのリストを取得.
-     *
-     * @return rssTitles.
-     */
-    public final List<String> getRssTitles() {
-        return rssTitles;
+    public final ItemData getItem() {
+        return item;
     }
 
     /**
