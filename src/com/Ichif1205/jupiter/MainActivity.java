@@ -203,11 +203,8 @@ public class MainActivity extends FragmentActivity implements
                         .setAction(urls.get(position))
                         .setLabel(rssTitles.get(position))
                         .build());
-
-                webviewIntent = new Intent(getApplicationContext(),
-                        WebViewActivity.class);
-                webviewIntent.putExtra("url", urls.get(position));
-                webviewIntent.putExtra("title", titles.get(position));
+                webviewIntent = getWebviewIntent(urls.get(position),
+                        titles.get(position));
                 startActivity(webviewIntent);
             }
         });
@@ -258,7 +255,7 @@ public class MainActivity extends FragmentActivity implements
      * @param itemDataList
      *            ItemDataのリスト.
      */
-    public void createIntentData(final List<ItemData> itemDataList) {
+    public final void createIntentData(final List<ItemData> itemDataList) {
         for (int i = 0; i < itemDataList.size(); i++) {
             urls.add(itemDataList.get(i).getLink());
             titles.add(itemDataList.get(i).getTitle());
@@ -271,12 +268,28 @@ public class MainActivity extends FragmentActivity implements
      *
      * @return Intent.
      */
-    public Intent getDefaultShareIntent() {
+    public final Intent getDefaultShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType(INTENT_TYPE);
         shareIntent.putExtra(Intent.EXTRA_TEXT, Constant.SHARE_TEXT);
         return shareIntent;
+    }
+
+    /**
+     * 受け取ったURLとタイトルをwebviewへインテント.
+     *
+     * @param url
+     *            URL.
+     * @param title
+     *            タイトル
+     */
+    public final Intent getWebviewIntent(final String url, final String title) {
+        Intent intent = new Intent(getApplicationContext(),
+                WebViewActivity.class);
+        intent.putExtra("url", url);
+        intent.putExtra("title", title);
+        return intent;
     }
 
     @Override
@@ -341,15 +354,6 @@ public class MainActivity extends FragmentActivity implements
      */
     public final List<String> getRssTitles() {
         return rssTitles;
-    }
-
-    /**
-     * intent列を取得.
-     *
-     * @return webviewIntent.
-     */
-    public final Intent getWebviewIntent() {
-        return webviewIntent;
     }
 
     /**
