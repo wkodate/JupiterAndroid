@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
+import com.Ichif1205.jupiter.ad.Asterisk;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
 import com.Ichif1205.jupiter.item.ItemData;
@@ -43,19 +44,14 @@ public class MainActivity extends FragmentActivity implements
     private static final String TAG = "MainActivity";
 
     /**
-     * 広告のリフレッシュ間隔.
-     */
-    private static final int AD_REFRESH_INTERVAL = 60;
-
-    /**
      * インテントの種類.
      */
     private static final String INTENT_TYPE = "text/plain";
 
     /**
-     * IconLoader.
+     * Asterisk.
      */
-    private IconLoader<Integer> iconLoader;
+    private final Asterisk ast;
 
     /**
      * Tracker.
@@ -94,6 +90,7 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "Call Constructor.");
         this.listView = null;
         this.item = new ItemData();
+        this.ast = new Asterisk(Constant.AST_MEDIA_CODE);
     }
 
     @Override
@@ -134,17 +131,13 @@ public class MainActivity extends FragmentActivity implements
     protected final void onResume() {
         super.onResume();
         // 広告の読み込み
-        if (iconLoader != null) {
-            iconLoader.startLoading();
-        }
+        ast.start();
     }
 
     @Override
     protected final void onPause() {
         // 広告読み込みの終了
-        if (iconLoader != null) {
-            iconLoader.stopLoading();
-        }
+        ast.stop();
         super.onPause();
     }
 
@@ -168,8 +161,9 @@ public class MainActivity extends FragmentActivity implements
         // リストビューに入れるアイテムのAdapterを生成
         setContentView(R.layout.activity_main);
 
-        // 広告の設定
-        setAstAd();
+        // 広告をビューにセットして開始
+        setAdView();
+        ast.start();
 
         itemAdapter = new ItemAdapter(this, 0, itemDataList);
         listView = (ListView) findViewById(R.id.listView);
@@ -219,21 +213,18 @@ public class MainActivity extends FragmentActivity implements
     }
 
     /**
-     * アスタのアイコン広告をセット.
+     * アスタのアイコン広告の準備.
      */
-    public final void setAstAd() {
-        // IconLoader を生成
-        if (iconLoader == null
-                && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
-            iconLoader = new IconLoader<Integer>(Constant.AST_MEDIA_CODE, this);
-            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
-            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+    public final void setAdView() {
+        if (ast.isStarting() || !ast.isValidCode()) {
+            return;
         }
-        // 広告の読み込み
-        iconLoader.startLoading();
+        // 広告のアイコンをビューにセット
+        IconLoader<Integer> iconLoader = ast.initIconLoader(this);
+        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
     }
 
     /**
