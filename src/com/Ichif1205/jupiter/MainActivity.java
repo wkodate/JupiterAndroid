@@ -24,9 +24,7 @@ import com.Ichif1205.jupiter.ad.Asterisk;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
 import com.Ichif1205.jupiter.item.ItemData;
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 /**
  * MainActivity.
@@ -54,9 +52,9 @@ public class MainActivity extends FragmentActivity implements
     private final Asterisk ast;
 
     /**
-     * Tracker.
+     * GoogleTracker.
      */
-    private Tracker tracker;
+    private GoogleTracker tracker;
 
     /**
      * Webviewへ渡すインテント.
@@ -104,27 +102,24 @@ public class MainActivity extends FragmentActivity implements
         setContentView(R.layout.listview_progress_bar);
 
         // GoogleAnalyticsの設定
-        // Get tracker.
-        tracker = ((AnalyticsApplication) getApplication()).getTracker(
-                AnalyticsApplication.TrackerName.APP_TRACKER);
-        // Set screen name.
-        tracker.setScreenName("MainActivity");
+        tracker = new GoogleTracker(this);
+
         // Send a screen view.
-        tracker.send(new HitBuilders.AppViewBuilder().build());
+        tracker.sendHit(new HitBuilders.AppViewBuilder().build());
     }
 
     @Override
     protected final void onStart() {
         super.onStart();
         // トラッキング開始
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        tracker.start();
     }
 
     @Override
     protected final void onStop() {
         super.onStop();
         // トラッキング終了
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        tracker.stop();
     }
 
     @Override
@@ -179,7 +174,7 @@ public class MainActivity extends FragmentActivity implements
                 Log.d(TAG, "Call onItemClick.");
                 // position番目のItemDataを取得
                 item = itemDataList.get(position);
-                tracker.send(new HitBuilders.EventBuilder()
+                tracker.sendHit(new HitBuilders.EventBuilder()
                         .setCategory("setOnItemClickListener")
                         .setAction(item.getLink())
                         .setLabel(item.getRssTitle())
@@ -283,15 +278,6 @@ public class MainActivity extends FragmentActivity implements
                     container, false);
             return rootView;
         }
-    }
-
-    /**
-     * Tracker取得.
-     *
-     * @return tracker.
-     */
-    public final Tracker getTracker() {
-        return tracker;
     }
 
     /**
