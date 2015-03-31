@@ -126,13 +126,17 @@ public class MainActivity extends FragmentActivity implements
     protected final void onResume() {
         super.onResume();
         // 広告の読み込み
-        ast.start();
+        if (ast != null) {
+            ast.start();
+        }
     }
 
     @Override
     protected final void onPause() {
         // 広告読み込みの終了
-        ast.stop();
+        if (ast != null) {
+            ast.stop();
+        }
         super.onPause();
     }
 
