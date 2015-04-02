@@ -42,6 +42,12 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             class="jp.maru.mrd.IconCell" />
+
+        <view
+            android:id="@+id/myCell5"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            class="jp.maru.mrd.IconCell" />
     </LinearLayout>
 
 </LinearLayout>
