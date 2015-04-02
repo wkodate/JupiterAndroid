@@ -224,6 +224,7 @@ public class MainActivity extends FragmentActivity implements
         ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
         ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
         ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
     }
 
     /**
