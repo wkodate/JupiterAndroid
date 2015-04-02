@@ -253,6 +253,7 @@ public class WebViewActivity extends Activity {
             ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
             ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
             ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
             iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
         }
         // 広告の読み込み
