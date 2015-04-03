@@ -3,5 +3,6 @@
 
     <string name="app_name">なんJまとめのまとめ</string>
     <string name="action_settings">Settings</string>
+    <string name="empty_item_message">"データを取得できませんでした。\nしばらくしてからもう一度やり直してください。"</string>
 
 </resources>
