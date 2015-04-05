@@ -59,7 +59,9 @@ public class SplashActivity extends Activity {
 
             // スプラッシュ完了後に実行するActivityを指定
             Intent intent = new Intent(getApplication(), MainActivity.class);
-            startActivity(intent);
+            if (!SplashActivity.this.isFinishing()) {
+                startActivity(intent);
+            }
             // SplashActivityを終了
             SplashActivity.this.finish();
         }
