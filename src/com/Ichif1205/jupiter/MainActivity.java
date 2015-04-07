@@ -156,6 +156,12 @@ public class MainActivity extends FragmentActivity implements
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
 
+        if (itemDataList == null || itemDataList.size() == 0) {
+            Log.d(TAG, "ItemDataList is empty.");
+            setContentView(R.layout.activity_main_empty_item);
+            return;
+        }
+
         // Adapterを指定
         // リストビューに入れるアイテムのAdapterを生成
         setContentView(R.layout.activity_main);
@@ -224,6 +230,7 @@ public class MainActivity extends FragmentActivity implements
         ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
         ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
         ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
     }
 
     /**
