@@ -1,6 +1,5 @@
 package com.Ichif1205.jupiter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.maru.mrd.IconCell;
@@ -21,20 +20,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
+import com.Ichif1205.jupiter.ad.Asterisk;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
 import com.Ichif1205.jupiter.item.ItemData;
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 /**
  * MainActivity.
  *
  * @author wkodate
+ * @version 1.0.1
  *
  */
-public class MainActivity extends FragmentActivity implements LoaderCallbacks<List<ItemData>> {
+public class MainActivity extends FragmentActivity implements
+        LoaderCallbacks<List<ItemData>> {
 
     /**
      * ログ.
@@ -42,34 +42,29 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     private static final String TAG = "MainActivity";
 
     /**
-     * 広告のリフレッシュ間隔.
+     * インテントの種類.
      */
-    private static final int AD_REFRESH_INTERVAL = 60;
+    private static final String INTENT_TYPE = "text/plain";
 
     /**
-     * IconLoader.
+     * Asterisk.
      */
-    private IconLoader<Integer> iconLoader;
+    private final Asterisk ast;
 
     /**
-     * Tracker.
+     * GoogleTracker.
      */
-    private Tracker tracker;
+    private GoogleTracker tracker;
 
     /**
-     * intentで渡すURLの配列.
+     * Webviewへ渡すインテント.
      */
-    private String[] urls;
+    private Intent webviewIntent;
 
     /**
-     * intentで渡すtitleの配列.
+     * intentで渡すItemData.
      */
-    private String[] titles;
-
-    /**
-     * rssTitleの配列.
-     */
-    private String[] rssTitles;
+    private ItemData item;
 
     /**
      * ListView.
@@ -92,6 +87,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
         this.listView = null;
+        this.item = new ItemData();
+        this.ast = new Asterisk(Constant.AST_MEDIA_CODE);
     }
 
     @Override
@@ -105,48 +102,47 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         setContentView(R.layout.listview_progress_bar);
 
         // GoogleAnalyticsの設定
-        // Get tracker.
-        tracker = ((AnalyticsApplication) getApplication()).getTracker(
-                AnalyticsApplication.TrackerName.APP_TRACKER);
-        // Set screen name.
-        tracker.setScreenName("MainActivity");
+        tracker = new GoogleTracker(this);
+
         // Send a screen view.
-        tracker.send(new HitBuilders.AppViewBuilder().build());
+        tracker.sendHit(new HitBuilders.AppViewBuilder().build());
     }
 
     @Override
     protected final void onStart() {
         super.onStart();
         // トラッキング開始
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        tracker.start();
     }
 
     @Override
     protected final void onStop() {
         super.onStop();
         // トラッキング終了
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        tracker.stop();
     }
 
     @Override
     protected final void onResume() {
         super.onResume();
         // 広告の読み込み
-        if (iconLoader != null) {
-            iconLoader.startLoading();
+        if (ast != null) {
+            ast.start();
         }
     }
 
     @Override
     protected final void onPause() {
         // 広告読み込みの終了
-        iconLoader.stopLoading();
+        if (ast != null) {
+            ast.stop();
+        }
         super.onPause();
     }
 
     @Override
     public final Loader<List<ItemData>> onCreateLoader(final int itemCount,
-            final Bundle arg1) {
+            final Bundle bundle) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
         asyncFetcher = new AsyncFetcher(this, itemCount);
@@ -155,19 +151,24 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     }
 
     @Override
-    public final void onLoadFinished(final Loader<List<ItemData>> arg0,
+    public final void onLoadFinished(final Loader<List<ItemData>> loader,
             final List<ItemData> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
-        // インテントで送るためのデータ作成
-        createIntentData(itemDataList);
+
+        if (itemDataList == null || itemDataList.size() == 0) {
+            Log.d(TAG, "ItemDataList is empty.");
+            setContentView(R.layout.activity_main_empty_item);
+            return;
+        }
 
         // Adapterを指定
         // リストビューに入れるアイテムのAdapterを生成
         setContentView(R.layout.activity_main);
 
-        // 広告の設定
-        setAstAd();
+        // 広告をビューにセットして開始
+        setAdView();
+        ast.start();
 
         itemAdapter = new ItemAdapter(this, 0, itemDataList);
         listView = (ListView) findViewById(R.id.listView);
@@ -181,16 +182,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
                     final View view,
                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
-                tracker.send(new HitBuilders.EventBuilder()
+                // position番目のItemDataを取得
+                item = itemDataList.get(position);
+                tracker.sendHit(new HitBuilders.EventBuilder()
                         .setCategory("setOnItemClickListener")
-                        .setAction(urls[position])
-                        .setLabel(rssTitles[position])
+                        .setAction(item.getLink())
+                        .setLabel(item.getRssTitle())
                         .build());
-
-                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
-                intent.putExtra("url", urls[position]);
-                intent.putExtra("title", titles[position]);
-                startActivity(intent);
+                webviewIntent = getWebviewIntent(item.getLink(),
+                        item.getTitle());
+                startActivity(webviewIntent);
             }
         });
     }
@@ -208,7 +209,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
         getMenuInflater().inflate(R.menu.main, menu);
         // プロバイダの取得と共有インテントのセット
         MenuItem actionItem = menu.findItem(R.id.share);
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem
+                .getActionProvider();
         // アクションビュー取得前にデフォルトの履歴をセット
         actionProvider.setShareIntent(getDefaultShareIntent());
 
@@ -216,40 +218,19 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
     }
 
     /**
-     * アスタのアイコン広告をセット.
+     * アスタのアイコン広告の準備.
      */
-    public final void setAstAd() {
-        // IconLoader を生成
-        if (iconLoader == null && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
-            iconLoader = new IconLoader<Integer>(Constant.AST_MEDIA_CODE, this);
-            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
-            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+    public final void setAdView() {
+        if (ast.isStarting() || !ast.isValidCode()) {
+            return;
         }
-        // 広告の読み込み
-        iconLoader.startLoading();
-    }
-
-    /**
-     * インテントのためのデータ生成.
-     *
-     * @param itemDataList
-     *            ItemDataのリスト.
-     */
-    private void createIntentData(final List<ItemData> itemDataList) {
-        List<String> linkList = new ArrayList<String>();
-        List<String> titleList = new ArrayList<String>();
-        List<String> rssTitleList = new ArrayList<String>();
-        for (int i = 0; i < itemDataList.size(); i++) {
-            linkList.add(itemDataList.get(i).getLink());
-            titleList.add(itemDataList.get(i).getTitle());
-            rssTitleList.add(itemDataList.get(i).getRssTitle());
-        }
-        urls = linkList.toArray(new String[linkList.size()]);
-        titles = titleList.toArray(new String[titleList.size()]);
-        rssTitles = rssTitleList.toArray(new String[rssTitleList.size()]);
+        // 広告のアイコンをビューにセット
+        IconLoader<Integer> iconLoader = ast.initIconLoader(this);
+        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
     }
 
     /**
@@ -257,18 +238,35 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
      *
      * @return Intent.
      */
-    private Intent getDefaultShareIntent() {
+    public final Intent getDefaultShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "#jupiter");
+        shareIntent.setType(INTENT_TYPE);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, Constant.SHARE_TEXT);
         return shareIntent;
     }
 
+    /**
+     * 受け取ったURLとタイトルをwebviewへインテント.
+     *
+     * @param url
+     *            URL.
+     * @param title
+     *            タイトル.
+     * @return webview intent
+     */
+    public final Intent getWebviewIntent(final String url, final String title) {
+        Intent intent = new Intent(getApplicationContext(),
+                WebViewActivity.class);
+        intent.putExtra("url", url);
+        intent.putExtra("title", title);
+        return intent;
+    }
+
     @Override
-    public final boolean onOptionsItemSelected(final MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem menuitem) {
         Log.d(TAG, "Call onOptionsItemSelected.");
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(menuitem);
     }
 
     /**
@@ -291,6 +289,33 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Li
                     container, false);
             return rootView;
         }
+    }
+
+    /**
+     * intentで渡すItemDataを取得.
+     *
+     * @return item.
+     */
+    public final ItemData getItem() {
+        return item;
+    }
+
+    /**
+     * listviewを取得.
+     *
+     * @return listView.
+     */
+    public final ListView getListview() {
+        return listView;
+    }
+
+    /**
+     * asyncFetcherを取得.
+     *
+     * @return asyncFetcher.
+     */
+    public final AsyncFetcher getAsyncFetcher() {
+        return asyncFetcher;
     }
 
 }

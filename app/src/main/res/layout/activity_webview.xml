@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/myCell"
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
         android:layout_alignParentTop="true"
         android:background="#EEEEEE"
         android:gravity="center"
@@ -15,14 +15,14 @@
 
         <view
             android:id="@+id/myCell1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             class="jp.maru.mrd.IconCell" />
 
         <view
             android:id="@+id/myCell2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             class="jp.maru.mrd.IconCell" />
 
         <view
@@ -33,8 +33,14 @@
 
         <view
             android:id="@+id/myCell4"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            class="jp.maru.mrd.IconCell" />
+
+        <view
+            android:id="@+id/myCell5"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             class="jp.maru.mrd.IconCell" />
     </LinearLayout>
 

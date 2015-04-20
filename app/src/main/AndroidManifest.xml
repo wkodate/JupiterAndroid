@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.Ichif1205.jupiter"
-    android:versionCode="1"
-    android:versionName="1.0.0" >
+    android:versionCode="3"
+    android:versionName="1.0.2" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -38,10 +38,11 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <!-- Splash Page -->
         <activity
-            android:name="com.Ichif1205.jupiter.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Holo.Light" >
+            android:name="com.Ichif1205.jupiter.SplashActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,7 +50,20 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Main"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <!-- /Splash Page -->
+        <activity
+            android:name="com.Ichif1205.jupiter.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+        <activity
             android:name="com.Ichif1205.jupiter.WebViewActivity"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
     </application>
