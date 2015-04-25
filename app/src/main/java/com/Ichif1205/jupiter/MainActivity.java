@@ -1,9 +1,5 @@
 package com.Ichif1205.jupiter;
 
-import java.util.List;
-
-import jp.maru.mrd.IconCell;
-import jp.maru.mrd.IconLoader;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +21,11 @@ import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
 import com.Ichif1205.jupiter.item.ItemData;
 import com.google.android.gms.analytics.HitBuilders;
+
+import java.util.List;
+
+import jp.maru.mrd.IconCell;
+import jp.maru.mrd.IconLoader;
 
 /**
  * MainActivity.
