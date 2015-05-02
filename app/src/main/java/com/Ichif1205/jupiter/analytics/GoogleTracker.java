@@ -3,6 +3,7 @@ package com.Ichif1205.jupiter.analytics;
 import android.app.Activity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.Map;
@@ -15,15 +16,11 @@ import java.util.Map;
  */
 public class GoogleTracker {
 
-    /**
-     * Tracker.
-     */
     private final Tracker tracker;
 
-    /**
-     * トラッキングするActivity.
-     */
-    private final Activity activity;
+    private final Activity targetActivity;
+
+    private static final String TRACKING_CATEGORY = "setOnItemClickListener";
 
     /**
      * コンストラクタ.
@@ -32,40 +29,45 @@ public class GoogleTracker {
      *            Activity
      */
     public GoogleTracker(final Activity act) {
-        this.activity = act;
+        this.targetActivity = act;
         // Get tracker.
-        tracker = ((AnalyticsApplication) activity.getApplication())
+        tracker = ((AnalyticsApplication) targetActivity.getApplication())
                 .getTracker(
                 AnalyticsApplication.TrackerName.APP_TRACKER);
         // Set screen name.
-        tracker.setScreenName(activity.getLocalClassName());
-
+        tracker.setScreenName(targetActivity.getLocalClassName());
     }
 
     /**
      * トラッキング開始.
      */
     public final void start() {
-        GoogleAnalytics.getInstance(activity.getApplicationContext())
-                .reportActivityStart(activity);
+        GoogleAnalytics.getInstance(targetActivity.getApplicationContext())
+                .reportActivityStart(targetActivity);
     }
 
     /**
      * トラッキング終了.
      */
     public final void stop() {
-        GoogleAnalytics.getInstance(activity.getApplicationContext())
-                .reportActivityStop(activity);
+        GoogleAnalytics.getInstance(targetActivity.getApplicationContext())
+                .reportActivityStop(targetActivity);
+    }
+
+    public final void sendInitialHit(final Map<String, String> data) {
+        tracker.send(data);
     }
 
     /**
      * アクセス情報を送信.
      *
-     * @param data
-     *            送信データ.
      */
-    public final void sendHit(final Map<String, String> data) {
-        tracker.send(data);
+    public final void sendHit(final String link, final String title) {
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(TRACKING_CATEGORY)
+                .setAction(link)
+                .setLabel(title)
+                .build());
     }
 
 }
