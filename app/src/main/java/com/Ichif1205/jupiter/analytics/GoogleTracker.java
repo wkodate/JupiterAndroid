@@ -1,11 +1,11 @@
-package com.Ichif1205.jupiter;
-
-import java.util.Map;
+package com.Ichif1205.jupiter.analytics;
 
 import android.app.Activity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+
+import java.util.Map;
 
 /**
  * GoogleTracker.java.

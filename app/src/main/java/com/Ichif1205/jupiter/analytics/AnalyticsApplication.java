@@ -1,10 +1,11 @@
-package com.Ichif1205.jupiter;
+package com.Ichif1205.jupiter.analytics;
 
 import java.util.HashMap;
 
 import android.app.Application;
 import android.util.Log;
 
+import com.Ichif1205.jupiter.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
