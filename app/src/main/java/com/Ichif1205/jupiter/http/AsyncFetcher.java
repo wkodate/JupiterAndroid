@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.Ichif1205.jupiter.Constant;
+import com.Ichif1205.jupiter.Secret;
 import com.Ichif1205.jupiter.item.ItemData;
 import com.Ichif1205.jupiter.item.ItemJsonParser;
 
@@ -50,7 +50,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
     /**
      * コンストラクタ.
      *
-     * @param context   コンテキスト.
+     * @param context コンテキスト.
      */
     public AsyncFetcher(final Context context) {
         super(context);
@@ -75,7 +75,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
         try {
             HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), CONNECTION_TIMEOUT);
             HttpConnectionParams.setSoTimeout(httpClient.getParams(), SO_TIMEOUT);
-            HttpGet httpGet = new HttpGet(Constant.API_URL);
+            HttpGet httpGet = new HttpGet(Secret.API_URL);
             return httpClient.execute(httpGet);
         } catch (IOException e) {
             e.printStackTrace();

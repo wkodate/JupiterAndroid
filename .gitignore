@@ -37,4 +37,4 @@ build/
 proguard/
 
 app/src/main/res/xml/
-app/src/main/java/com/Ichif1205/jupiter/Constant.java
+app/src/main/java/com/Ichif1205/jupiter/Secret.java

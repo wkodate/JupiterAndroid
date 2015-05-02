@@ -33,7 +33,6 @@ import jp.maru.mrd.IconLoader;
  *
  * @author wkodate
  * @version 1.0.1
- *
  */
 public class MainActivity extends FragmentActivity implements
         LoaderCallbacks<List<ItemData>> {
@@ -51,7 +50,7 @@ public class MainActivity extends FragmentActivity implements
     /**
      * Asterisk.
      */
-    private final Asterisk ast = new Asterisk(Constant.AST_MEDIA_CODE);
+    private final Asterisk ast = new Asterisk(Secret.AST_MEDIA_CODE);
 
     /**
      * GoogleTracker.
@@ -118,7 +117,7 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public final Loader<List<ItemData>> onCreateLoader(final int itemCount,
-            final Bundle bundle) {
+                                                       final Bundle bundle) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
         asyncFetcher = new AsyncFetcher(this);
@@ -128,7 +127,7 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public final void onLoadFinished(final Loader<List<ItemData>> loader,
-            final List<ItemData> itemDataList) {
+                                     final List<ItemData> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
 
@@ -147,8 +146,8 @@ public class MainActivity extends FragmentActivity implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent,
-                    final View view,
-                    final int position, final long id) {
+                                    final View view,
+                                    final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
                 // position番目のItemDataを取得
                 ItemData item = itemDataList.get(position);
@@ -184,10 +183,8 @@ public class MainActivity extends FragmentActivity implements
     /**
      * 受け取ったURLとタイトルをwebviewへインテントするためのインスタンスを生成.
      *
-     * @param url
-     *            URL.
-     * @param title
-     *            タイトル.
+     * @param url   URL.
+     * @param title タイトル.
      * @return webview intent
      */
     private Intent getWebviewIntent(final String url, final String title) {
@@ -251,8 +248,8 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         public final View onCreateView(final LayoutInflater inflater,
-                final ViewGroup container,
-                final Bundle savedInstanceState) {
+                                       final ViewGroup container,
+                                       final Bundle savedInstanceState) {
             Log.d(TAG, "Call onCreateView.");
             View rootView = inflater.inflate(R.layout.fragment_main,
                     container, false);
