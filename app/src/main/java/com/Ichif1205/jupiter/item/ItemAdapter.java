@@ -1,7 +1,5 @@
 package com.Ichif1205.jupiter.item;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +10,15 @@ import android.widget.TextView;
 
 import com.Ichif1205.jupiter.R;
 
+import java.util.List;
+
 /**
  * ItemAdapter.
  *
  * @author wkodate
  *
  */
-public class ItemAdapter extends ArrayAdapter<ItemData> {
+public class ItemAdapter extends ArrayAdapter<RssItem> {
 
     /**
      * ログ.
@@ -39,7 +39,7 @@ public class ItemAdapter extends ArrayAdapter<ItemData> {
      *            ListViewに表示するオブジェクト.
      */
     public ItemAdapter(final Context context, final int textViewResourceId,
-            final List<ItemData> objects) {
+            final List<RssItem> objects) {
         super(context, textViewResourceId, objects);
         layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -49,7 +49,7 @@ public class ItemAdapter extends ArrayAdapter<ItemData> {
     public final View getView(final int position, final View convertView,
             final ViewGroup parent) {
         // この位置のアイテムを取得
-        ItemData itemData = getItem(position);
+        RssItem itemData = getItem(position);
         View view = convertView;
         if (null == convertView) {
             if (itemData.getImage() != null && !"".equals(itemData.getImage())) {

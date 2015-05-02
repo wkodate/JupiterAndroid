@@ -20,7 +20,7 @@ import com.Ichif1205.jupiter.ad.Asterisk;
 import com.Ichif1205.jupiter.analytics.GoogleTracker;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
-import com.Ichif1205.jupiter.item.ItemData;
+import com.Ichif1205.jupiter.item.RssItem;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import jp.maru.mrd.IconLoader;
  * @version 1.0.1
  */
 public class MainActivity extends FragmentActivity implements
-        LoaderCallbacks<List<ItemData>> {
+        LoaderCallbacks<List<RssItem>> {
 
     /**
      * ログ.
@@ -116,7 +116,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final Loader<List<ItemData>> onCreateLoader(final int itemCount,
+    public final Loader<List<RssItem>> onCreateLoader(final int itemCount,
                                                        final Bundle bundle) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
@@ -126,8 +126,8 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final void onLoadFinished(final Loader<List<ItemData>> loader,
-                                     final List<ItemData> itemDataList) {
+    public final void onLoadFinished(final Loader<List<RssItem>> loader,
+                                     final List<RssItem> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
 
@@ -150,7 +150,7 @@ public class MainActivity extends FragmentActivity implements
                                     final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
                 // position番目のItemDataを取得
-                ItemData item = itemDataList.get(position);
+                RssItem item = itemDataList.get(position);
                 tracker.sendHit(item.getLink(), item.getRssTitle());
                 Intent webviewIntent = getWebviewIntent(item.getLink(),
                         item.getTitle());
@@ -196,7 +196,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final void onLoaderReset(final Loader<List<ItemData>> arg0) {
+    public final void onLoaderReset(final Loader<List<RssItem>> arg0) {
         // 前に作成したloaderがリセットされた時に呼ばれる
         Log.d(TAG, "Call onLoadReset.");
     }

@@ -5,8 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.Ichif1205.jupiter.Secret;
-import com.Ichif1205.jupiter.item.ItemData;
 import com.Ichif1205.jupiter.item.ItemJsonParser;
+import com.Ichif1205.jupiter.item.RssItem;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author wkodate
  */
-public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
+public class AsyncFetcher extends AsyncTaskLoader<List<RssItem>> {
 
     /**
      * ログ.
@@ -59,7 +59,7 @@ public class AsyncFetcher extends AsyncTaskLoader<List<ItemData>> {
     }
 
     @Override
-    public final List<ItemData> loadInBackground() {
+    public final List<RssItem> loadInBackground() {
         // バックグラウンドで実行する処理
         Log.d(TAG, "Call loadInBackground.");
 

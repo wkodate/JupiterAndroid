@@ -33,7 +33,7 @@ public class ItemJsonParser {
      *
      * @return itemList
      */
-    public List<ItemData> parse() {
+    public List<RssItem> parse() {
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(json);
@@ -41,29 +41,29 @@ public class ItemJsonParser {
             e.printStackTrace();
             return null;
         }
-        List<ItemData> itemDataList = new ArrayList<>();
+        List<RssItem> rssItemList = new ArrayList<>();
         for (int i = 0; i < Constant.ITEM_VIEW_COUNT; i++) {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                itemDataList.add(extractItemFields(jsonObject));
+                rssItemList.add(extractItemFields(jsonObject));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return itemDataList;
+        return rssItemList;
     }
 
-    private ItemData extractItemFields(JSONObject json) throws JSONException {
-        ItemData itemData = new ItemData();
+    private RssItem extractItemFields(JSONObject json) throws JSONException {
+        RssItem rssItem = new RssItem();
 
-        itemData.setLink(json.getString(Constant.LINK_FIELD));
-        itemData.setTitle(json.getString(Constant.TITLE_FIELD));
-        itemData.setRssTitle(json.getString(Constant.RSS_TITLE_FIELD));
-        itemData.setDate(json.getString(Constant.DATE_FIELD));
-        //itemData.setDescription(json.getString(Constant.DESC_FIELD));
-        //itemData.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
+        rssItem.setLink(json.getString(Constant.LINK_FIELD));
+        rssItem.setTitle(json.getString(Constant.TITLE_FIELD));
+        rssItem.setRssTitle(json.getString(Constant.RSS_TITLE_FIELD));
+        rssItem.setDate(json.getString(Constant.DATE_FIELD));
+        //rssItem.setDescription(json.getString(Constant.DESC_FIELD));
+        //rssItem.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
 
-        return itemData;
+        return rssItem;
     }
 
     /**
