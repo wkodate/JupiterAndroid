@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
 import com.Ichif1205.jupiter.ad.Asterisk;
+import com.Ichif1205.jupiter.analytics.GoogleTracker;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
 import com.Ichif1205.jupiter.item.ItemData;
@@ -146,7 +147,7 @@ public class MainActivity extends FragmentActivity implements
             final Bundle bundle) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
-        asyncFetcher = new AsyncFetcher(this, itemCount);
+        asyncFetcher = new AsyncFetcher(this);
         asyncFetcher.forceLoad();
         return asyncFetcher;
     }

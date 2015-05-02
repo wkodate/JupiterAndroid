@@ -60,8 +60,8 @@ public class ItemJsonParser {
         itemData.setTitle(json.getString(Constant.TITLE_FIELD));
         itemData.setRssTitle(json.getString(Constant.RSS_TITLE_FIELD));
         itemData.setDate(json.getString(Constant.DATE_FIELD));
-        itemData.setDescription(json.getString(Constant.DESC_FIELD));
-        itemData.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
+        //itemData.setDescription(json.getString(Constant.DESC_FIELD));
+        //itemData.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
 
         return itemData;
     }
