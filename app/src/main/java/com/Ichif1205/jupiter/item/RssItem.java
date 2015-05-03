@@ -3,12 +3,12 @@ package com.Ichif1205.jupiter.item;
 import android.graphics.Bitmap;
 
 /**
- * ItemData.
+ * RssItem.
  *
  * @author wkodate
  *
  */
-public class ItemData {
+public class RssItem {
 
     /**
      * タイトル.

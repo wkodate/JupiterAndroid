@@ -1,9 +1,5 @@
 package com.Ichif1205.jupiter;
 
-import java.util.List;
-
-import jp.maru.mrd.IconCell;
-import jp.maru.mrd.IconLoader;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,20 +17,25 @@ import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
 import com.Ichif1205.jupiter.ad.Asterisk;
+import com.Ichif1205.jupiter.analytics.GoogleTracker;
 import com.Ichif1205.jupiter.http.AsyncFetcher;
 import com.Ichif1205.jupiter.item.ItemAdapter;
-import com.Ichif1205.jupiter.item.ItemData;
+import com.Ichif1205.jupiter.item.RssItem;
 import com.google.android.gms.analytics.HitBuilders;
+
+import java.util.List;
+
+import jp.maru.mrd.IconCell;
+import jp.maru.mrd.IconLoader;
 
 /**
  * MainActivity.
  *
  * @author wkodate
  * @version 1.0.1
- *
  */
 public class MainActivity extends FragmentActivity implements
-        LoaderCallbacks<List<ItemData>> {
+        LoaderCallbacks<List<RssItem>> {
 
     /**
      * ログ.
@@ -49,7 +50,7 @@ public class MainActivity extends FragmentActivity implements
     /**
      * Asterisk.
      */
-    private final Asterisk ast;
+    private final Asterisk ast = new Asterisk(Secret.AST_MEDIA_CODE);
 
     /**
      * GoogleTracker.
@@ -57,38 +58,12 @@ public class MainActivity extends FragmentActivity implements
     private GoogleTracker tracker;
 
     /**
-     * Webviewへ渡すインテント.
-     */
-    private Intent webviewIntent;
-
-    /**
-     * intentで渡すItemData.
-     */
-    private ItemData item;
-
-    /**
-     * ListView.
-     */
-    private ListView listView;
-
-    /**
-     * ItemAdapter.
-     */
-    private ItemAdapter itemAdapter;
-
-    /**
      * Fetcher.
      */
     private AsyncFetcher asyncFetcher;
 
-    /**
-     * コンストラクタ.
-     */
     public MainActivity() {
         Log.d(TAG, "Call Constructor.");
-        this.listView = null;
-        this.item = new ItemData();
-        this.ast = new Asterisk(Constant.AST_MEDIA_CODE);
     }
 
     @Override
@@ -105,7 +80,7 @@ public class MainActivity extends FragmentActivity implements
         tracker = new GoogleTracker(this);
 
         // Send a screen view.
-        tracker.sendHit(new HitBuilders.AppViewBuilder().build());
+        tracker.sendInitialHit(new HitBuilders.AppViewBuilder().build());
     }
 
     @Override
@@ -141,18 +116,18 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public final Loader<List<ItemData>> onCreateLoader(final int itemCount,
-            final Bundle bundle) {
+    public final Loader<List<RssItem>> onCreateLoader(final int itemCount,
+                                                       final Bundle bundle) {
         // 新しいLoaderが作成された時に呼ばれる
         Log.d(TAG, "Call onCreateLoader.");
-        asyncFetcher = new AsyncFetcher(this, itemCount);
+        asyncFetcher = new AsyncFetcher(this);
         asyncFetcher.forceLoad();
         return asyncFetcher;
     }
 
     @Override
-    public final void onLoadFinished(final Loader<List<ItemData>> loader,
-            final List<ItemData> itemDataList) {
+    public final void onLoadFinished(final Loader<List<RssItem>> loader,
+                                     final List<RssItem> itemDataList) {
         // 前に作成したloaderがloadを完了した時に呼ばれる
         Log.d(TAG, "Call onLoadFinished.");
 
@@ -162,42 +137,66 @@ public class MainActivity extends FragmentActivity implements
             return;
         }
 
-        // Adapterを指定
-        // リストビューに入れるアイテムのAdapterを生成
         setContentView(R.layout.activity_main);
-
-        // 広告をビューにセットして開始
-        setAdView();
-        ast.start();
-
-        itemAdapter = new ItemAdapter(this, 0, itemDataList);
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(itemAdapter);
+        initializeAd();
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(new ItemAdapter(this, 0, itemDataList));
         asyncFetcher.stopLoading();
 
-        // クリックされた時の処理
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent,
-                    final View view,
-                    final int position, final long id) {
+                                    final View view,
+                                    final int position, final long id) {
                 Log.d(TAG, "Call onItemClick.");
                 // position番目のItemDataを取得
-                item = itemDataList.get(position);
-                tracker.sendHit(new HitBuilders.EventBuilder()
-                        .setCategory("setOnItemClickListener")
-                        .setAction(item.getLink())
-                        .setLabel(item.getRssTitle())
-                        .build());
-                webviewIntent = getWebviewIntent(item.getLink(),
+                RssItem item = itemDataList.get(position);
+                tracker.sendHit(item.getLink(), item.getRssTitle());
+                Intent webviewIntent = getWebviewIntent(item.getLink(),
                         item.getTitle());
                 startActivity(webviewIntent);
             }
         });
     }
 
+    private void initializeAd() {
+        setAdView();
+        ast.start();
+    }
+
+    /**
+     * アスタのアイコン広告の準備.
+     */
+    private void setAdView() {
+        if (ast.isStarting() || !ast.isValidCode()) {
+            return;
+        }
+        // 広告のアイコンをビューにセット
+        IconLoader<Integer> iconLoader = ast.initIconLoader(this);
+        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
+    }
+
+    /**
+     * 受け取ったURLとタイトルをwebviewへインテントするためのインスタンスを生成.
+     *
+     * @param url   URL.
+     * @param title タイトル.
+     * @return webview intent
+     */
+    private Intent getWebviewIntent(final String url, final String title) {
+        Intent intent = new Intent(getApplicationContext(),
+                WebViewActivity.class);
+        intent.putExtra("url", url);
+        intent.putExtra("title", title);
+        return intent;
+    }
+
     @Override
-    public final void onLoaderReset(final Loader<List<ItemData>> arg0) {
+    public final void onLoaderReset(final Loader<List<RssItem>> arg0) {
         // 前に作成したloaderがリセットされた時に呼ばれる
         Log.d(TAG, "Call onLoadReset.");
     }
@@ -218,49 +217,16 @@ public class MainActivity extends FragmentActivity implements
     }
 
     /**
-     * アスタのアイコン広告の準備.
-     */
-    public final void setAdView() {
-        if (ast.isStarting() || !ast.isValidCode()) {
-            return;
-        }
-        // 広告のアイコンをビューにセット
-        IconLoader<Integer> iconLoader = ast.initIconLoader(this);
-        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
-        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
-        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
-        ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
-        ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
-    }
-
-    /**
      * シェア用のインテントを返す.
      *
      * @return Intent.
      */
-    public final Intent getDefaultShareIntent() {
+    private Intent getDefaultShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType(INTENT_TYPE);
         shareIntent.putExtra(Intent.EXTRA_TEXT, Constant.SHARE_TEXT);
         return shareIntent;
-    }
-
-    /**
-     * 受け取ったURLとタイトルをwebviewへインテント.
-     *
-     * @param url
-     *            URL.
-     * @param title
-     *            タイトル.
-     * @return webview intent
-     */
-    public final Intent getWebviewIntent(final String url, final String title) {
-        Intent intent = new Intent(getApplicationContext(),
-                WebViewActivity.class);
-        intent.putExtra("url", url);
-        intent.putExtra("title", title);
-        return intent;
     }
 
     @Override
@@ -282,40 +248,13 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         public final View onCreateView(final LayoutInflater inflater,
-                final ViewGroup container,
-                final Bundle savedInstanceState) {
+                                       final ViewGroup container,
+                                       final Bundle savedInstanceState) {
             Log.d(TAG, "Call onCreateView.");
             View rootView = inflater.inflate(R.layout.fragment_main,
                     container, false);
             return rootView;
         }
-    }
-
-    /**
-     * intentで渡すItemDataを取得.
-     *
-     * @return item.
-     */
-    public final ItemData getItem() {
-        return item;
-    }
-
-    /**
-     * listviewを取得.
-     *
-     * @return listView.
-     */
-    public final ListView getListview() {
-        return listView;
-    }
-
-    /**
-     * asyncFetcherを取得.
-     *
-     * @return asyncFetcher.
-     */
-    public final AsyncFetcher getAsyncFetcher() {
-        return asyncFetcher;
     }
 
 }

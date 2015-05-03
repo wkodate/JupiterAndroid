@@ -1,10 +1,5 @@
 package com.Ichif1205.jupiter;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import jp.maru.mrd.IconCell;
-import jp.maru.mrd.IconLoader;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,18 +14,24 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import com.Ichif1205.jupiter.item.WebViewItem;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import jp.maru.mrd.IconCell;
+import jp.maru.mrd.IconLoader;
+
 /**
  * WebViewActivity.
  *
  * @author wkodate
- *
  */
 public class WebViewActivity extends Activity {
 
-    /**
-     * ログ.
-     */
     private static final String TAG = "WebViewActivity";
+
+    private static final boolean DISPLAY_AD = true;
 
     /**
      * 広告のリフレッシュ間隔.
@@ -47,29 +48,10 @@ public class WebViewActivity extends Activity {
      */
     private ProgressBar progressBar;
 
-    /**
-     * WebView.
-     */
     private WebView webView;
 
-    /**
-     * title.
-     */
-    private String title;
+    private WebViewItem webViewItem;
 
-    /**
-     * URL.
-     */
-    private String permanentLink;
-
-    /**
-     * つぶやく文字列.
-     */
-    private String tweetText;
-
-    /**
-     * コンストラクタ.
-     */
     public WebViewActivity() {
         Log.d(TAG, "Call Constructor.");
     }
@@ -78,62 +60,28 @@ public class WebViewActivity extends Activity {
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Call onCreate.");
-        setContentView(R.layout.activity_webview);
+        setActivityView();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        // title取得
-        title = getIntentedTitle();
-        // url取得
-        permanentLink = getIntentedUrl();
-        // リンク情報を表示
+        // リンク情報を読み込み
         webView = (WebView) findViewById(R.id.webview);
+        webViewItem = new WebViewItem(getIntent());
         setStateOfWebView();
-        webView.loadUrl(permanentLink);
+        webView.loadUrl(webViewItem.permanentLink);
 
         // 広告をセット
         setAstAd();
-        // Twitter用のつぶやきテキストをセット
-        setTweetText();
         // アイコンをセット
         setWebViewButton();
     }
 
-    @Override
-    protected final void onResume() {
-        super.onResume();
-        // 広告の読み込み
-        if (iconLoader != null) {
-            iconLoader.startLoading();
+    private void setActivityView() {
+        if (DISPLAY_AD) {
+            setContentView(R.layout.activity_webview);
+            return;
         }
+        setContentView(R.layout.activity_webview_wo_ad);
     }
 
-    @Override
-    protected final void onPause() {
-        // 広告読み込みの終了
-        iconLoader.stopLoading();
-        super.onPause();
-    }
-
-    /**
-     * Intentで送られてきたタイトルの取得.
-     *
-     * @return intentで送られてきたタイトル.
-     */
-    private String getIntentedTitle() {
-        Intent intent = getIntent();
-        String intentedTitle = (String) intent.getExtras().get("title");
-        return intentedTitle;
-    }
-
-    /**
-     * Intentで送られてきたURLの取得.
-     *
-     * @return intentで送られてきたURL.
-     */
-    private String getIntentedUrl() {
-        Intent intent = getIntent();
-        String intentedUrl = (String) intent.getExtras().get("url");
-        return intentedUrl;
-    }
 
     /**
      * WebViewの設定.
@@ -152,7 +100,7 @@ public class WebViewActivity extends Activity {
             // ページ遷移する前に呼ばれる
             @Override
             public boolean shouldOverrideUrlLoading(final WebView view,
-                    final String url) {
+                                                    final String url) {
                 // 外部ブラウザでなく内部ブラウザを利用
                 return false;
             }
@@ -160,12 +108,12 @@ public class WebViewActivity extends Activity {
             // エラー時に呼ばれる
             @Override
             public void onReceivedError(final WebView view, final int errorCode,
-                    final String description, final String failingUrl) {
+                                        final String description, final String failingUrl) {
             }
 
             @Override
             public void onPageStarted(final WebView view, final String url,
-                    final android.graphics.Bitmap bitmap) {
+                                      final android.graphics.Bitmap bitmap) {
                 // 読み込みを開始した時の処理
                 super.onPageStarted(view, url, bitmap);
                 // プログレスバーを表示
@@ -187,7 +135,6 @@ public class WebViewActivity extends Activity {
      * 拡張したWebChromeClient.
      *
      * @author wkodate
-     *
      */
     protected class CustomWebChromeClient extends WebChromeClient {
         @Override
@@ -198,7 +145,30 @@ public class WebViewActivity extends Activity {
     }
 
     /**
+     * アスタのアイコン広告をセット.
+     */
+    public final void setAstAd() {
+        if (!DISPLAY_AD) {
+            return;
+        }
+        // IconLoader を生成
+        if (iconLoader == null && IconLoader.isValidMediaCode(Secret.AST_MEDIA_CODE)) {
+            iconLoader = new IconLoader<Integer>(Secret.AST_MEDIA_CODE, this);
+            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+            ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
+            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+        }
+        // 広告の読み込み
+        iconLoader.startLoading();
+    }
+
+    /**
      * WebView用のボタンをセット.
+     * <p/>
+     * TODO: activeじゃない場合はクリックできないようにする
      */
     private void setWebViewButton() {
 
@@ -234,7 +204,7 @@ public class WebViewActivity extends Activity {
         twitterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                String url = "http://twitter.com/share?text=" + tweetText;
+                String url = "http://twitter.com/share?text=" + encodeTweetText();
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(intent);
             }
@@ -243,32 +213,32 @@ public class WebViewActivity extends Activity {
     }
 
     /**
-     * アスタのアイコン広告をセット.
+     * つぶやく文字列をURLエンコードして返す.
      */
-    public final void setAstAd() {
-        // IconLoader を生成
-        if (iconLoader == null && IconLoader.isValidMediaCode(Constant.AST_MEDIA_CODE)) {
-            iconLoader = new IconLoader<Integer>(Constant.AST_MEDIA_CODE, this);
-            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
-            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
-        }
-        // 広告の読み込み
-        iconLoader.startLoading();
-    }
-
-    /**
-     * つぶやく文字列を作成.
-     */
-    private void setTweetText() {
+    private String encodeTweetText() {
         try {
-            tweetText = URLEncoder.encode(title + " " + permanentLink + " #なんJまとめのまとめ", "UTF-8");
+            return URLEncoder.encode(webViewItem.title + " " + webViewItem.permanentLink + " "
+                    + Constant.HASH_TAG, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        return "";
+    }
+
+    @Override
+    protected final void onResume() {
+        super.onResume();
+        // 広告の読み込み
+        if (iconLoader != null) {
+            iconLoader.startLoading();
+        }
+    }
+
+    @Override
+    protected final void onPause() {
+        // 広告読み込みの終了
+        iconLoader.stopLoading();
+        super.onPause();
     }
 
 }
