@@ -31,7 +31,7 @@ public class WebViewActivity extends Activity {
 
     private static final String TAG = "WebViewActivity";
 
-    private static final boolean DISPLAY_AD = true;
+    private static final boolean DISPLAY_AD = false;
 
     /**
      * 広告のリフレッシュ間隔.
@@ -237,7 +237,9 @@ public class WebViewActivity extends Activity {
     @Override
     protected final void onPause() {
         // 広告読み込みの終了
-        iconLoader.stopLoading();
+        if (iconLoader != null) {
+            iconLoader.stopLoading();
+        }
         super.onPause();
     }
 

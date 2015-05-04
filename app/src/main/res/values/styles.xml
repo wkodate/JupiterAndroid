@@ -1,8 +1,12 @@
 <resources>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/main_actionbar_style</item>
+    </style>
+
+    <style name="main_actionbar_style" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/theme_color</item>
     </style>
 
 </resources>
