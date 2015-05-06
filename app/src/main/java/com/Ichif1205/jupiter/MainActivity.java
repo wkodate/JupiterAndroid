@@ -101,17 +101,13 @@ public class MainActivity extends FragmentActivity implements
     protected final void onResume() {
         super.onResume();
         // 広告の読み込み
-        if (ast != null) {
-            ast.start();
-        }
+        ast.start();
     }
 
     @Override
     protected final void onPause() {
         // 広告読み込みの終了
-        if (ast != null) {
-            ast.stop();
-        }
+        ast.stop();
         super.onPause();
     }
 
@@ -173,10 +169,15 @@ public class MainActivity extends FragmentActivity implements
         }
         // 広告のアイコンをビューにセット
         IconLoader<Integer> iconLoader = ast.initIconLoader(this);
+        ((IconCell) findViewById(R.id.myCell1)).setTitleColor(Asterisk.AD_TITLE_COLOR);
         ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell2)).setTitleColor(Asterisk.AD_TITLE_COLOR);
         ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell3)).setTitleColor(Asterisk.AD_TITLE_COLOR);
         ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell4)).setTitleColor(Asterisk.AD_TITLE_COLOR);
         ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell5)).setTitleColor(Asterisk.AD_TITLE_COLOR);
         ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
     }
 

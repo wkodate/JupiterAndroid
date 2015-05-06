@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import com.Ichif1205.jupiter.ad.Asterisk;
 import com.Ichif1205.jupiter.item.WebViewItem;
 
 import java.io.UnsupportedEncodingException;
@@ -31,17 +32,15 @@ public class WebViewActivity extends Activity {
 
     private static final String TAG = "WebViewActivity";
 
-    private static final boolean DISPLAY_AD = false;
+    /**
+     * 広告を表示するか否か.
+     */
+    private static final boolean DISPLAY_AD = true;
 
     /**
-     * 広告のリフレッシュ間隔.
+     * Asterisk.
      */
-    private static final int AD_REFRESH_INTERVAL = 60;
-
-    /**
-     * IconLoader.
-     */
-    private IconLoader<Integer> iconLoader;
+    private final Asterisk ast = new Asterisk(Secret.AST_MEDIA_CODE);
 
     /**
      * プログレスバー.
@@ -68,8 +67,7 @@ public class WebViewActivity extends Activity {
         setStateOfWebView();
         webView.loadUrl(webViewItem.permanentLink);
 
-        // 広告をセット
-        setAstAd();
+        initializeAd();
         // アイコンをセット
         setWebViewButton();
     }
@@ -81,7 +79,6 @@ public class WebViewActivity extends Activity {
         }
         setContentView(R.layout.activity_webview_wo_ad);
     }
-
 
     /**
      * WebViewの設定.
@@ -144,25 +141,33 @@ public class WebViewActivity extends Activity {
         }
     }
 
+    private void initializeAd() {
+        setAdView();
+        ast.start();
+    }
+
     /**
      * アスタのアイコン広告をセット.
      */
-    public final void setAstAd() {
+    public final void setAdView() {
         if (!DISPLAY_AD) {
             return;
         }
-        // IconLoader を生成
-        if (iconLoader == null && IconLoader.isValidMediaCode(Secret.AST_MEDIA_CODE)) {
-            iconLoader = new IconLoader<Integer>(Secret.AST_MEDIA_CODE, this);
-            ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
-            ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
-            iconLoader.setRefreshInterval(AD_REFRESH_INTERVAL);
+        if (ast.isStarting() || !ast.isValidCode()) {
+            return;
         }
-        // 広告の読み込み
-        iconLoader.startLoading();
+        // 広告のアイコンをビューにセット
+        IconLoader<Integer> iconLoader = ast.initIconLoader(this);
+        ((IconCell) findViewById(R.id.myCell1)).setTitleColor(Asterisk.AD_TITLE_COLOR);
+        ((IconCell) findViewById(R.id.myCell1)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell2)).setTitleColor(Asterisk.AD_TITLE_COLOR);
+        ((IconCell) findViewById(R.id.myCell2)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell3)).setTitleColor(Asterisk.AD_TITLE_COLOR);
+        ((IconCell) findViewById(R.id.myCell3)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell4)).setTitleColor(Asterisk.AD_TITLE_COLOR);
+        ((IconCell) findViewById(R.id.myCell4)).addToIconLoader(iconLoader);
+        ((IconCell) findViewById(R.id.myCell5)).setTitleColor(Asterisk.AD_TITLE_COLOR);
+        ((IconCell) findViewById(R.id.myCell5)).addToIconLoader(iconLoader);
     }
 
     /**
@@ -228,18 +233,12 @@ public class WebViewActivity extends Activity {
     @Override
     protected final void onResume() {
         super.onResume();
-        // 広告の読み込み
-        if (iconLoader != null) {
-            iconLoader.startLoading();
-        }
+        ast.start();
     }
 
     @Override
     protected final void onPause() {
-        // 広告読み込みの終了
-        if (iconLoader != null) {
-            iconLoader.stopLoading();
-        }
+        ast.stop();
         super.onPause();
     }
 

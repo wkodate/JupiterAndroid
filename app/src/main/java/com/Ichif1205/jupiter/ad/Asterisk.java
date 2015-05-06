@@ -1,7 +1,8 @@
 package com.Ichif1205.jupiter.ad;
 
-import jp.maru.mrd.IconLoader;
 import android.content.Context;
+
+import jp.maru.mrd.IconLoader;
 
 /**
  * Asterisk.java
@@ -15,6 +16,11 @@ public class Asterisk {
      * 広告のリフレッシュ間隔.
      */
     private static final int AD_REFRESH_INTERVAL = 60;
+
+    /**
+     * 広告のリフレッシュ間隔.
+     */
+    public static final int AD_TITLE_COLOR = 0xffffffff;
 
     /**
      * メディアコード.
