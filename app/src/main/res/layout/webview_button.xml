@@ -10,27 +10,47 @@
         android:id="@+id/backward"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:background="@color/white"
         android:src="@drawable/icon_back" />
 
     <ImageButton
         android:id="@+id/forward"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:background="@color/white"
         android:src="@drawable/icon_forward" />
 
     <ImageButton
         android:id="@+id/reload"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:background="@color/white"
         android:src="@drawable/icon_reload" />
 
     <ImageButton
         android:id="@+id/twitter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:background="@color/white"
         android:src="@drawable/icon_twitter" />
 </LinearLayout>
