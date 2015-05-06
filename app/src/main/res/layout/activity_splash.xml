@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:animateLayoutChanges="true"
-    android:background="#90ee90"
-    android:orientation="vertical" >
+    android:background="@color/theme_color"
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="centerInside"
-        android:src="@drawable/icon_splash" />
+        android:src="@drawable/icon_white" />
 
 </LinearLayout>

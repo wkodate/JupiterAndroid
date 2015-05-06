@@ -26,6 +26,11 @@ public final class Constant {
     public static final int ITEM_VIEW_COUNT = 100;
 
     /**
+     * 広告のリフレッシュ間隔.
+     */
+    public static final int AD_REFRESH_INTERVAL = 60;
+
+    /**
      * linkフィールド.
      */
     public static final String LINK_FIELD = "link";
