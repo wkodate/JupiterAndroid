@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/theme_color"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/backward"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icon_back" />
+
+    <ImageButton
+        android:id="@+id/forward"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icon_forward" />
+
+    <ImageButton
+        android:id="@+id/reload"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icon_reload" />
+
+    <ImageButton
+        android:id="@+id/twitter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icon_twitter" />
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/myCell"
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:layout_weight="0"
+        android:background="@color/theme_color"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <view
+            android:id="@+id/myCell1"
+            class="jp.maru.mrd.IconCell"
+            android:layout_width="70dp"
+            android:layout_height="70dp" />
+
+        <view
+            android:id="@+id/myCell2"
+            class="jp.maru.mrd.IconCell"
+            android:layout_width="70dp"
+            android:layout_height="70dp" />
+
+        <view
+            android:id="@+id/myCell3"
+            class="jp.maru.mrd.IconCell"
+            android:layout_width="70dp"
+            android:layout_height="70dp" />
+
+        <view
+            android:id="@+id/myCell4"
+            class="jp.maru.mrd.IconCell"
+            android:layout_width="70dp"
+            android:layout_height="70dp" />
+
+        <view
+            android:id="@+id/myCell5"
+            class="jp.maru.mrd.IconCell"
+            android:layout_width="70dp"
+            android:layout_height="70dp" />
+    </LinearLayout>
