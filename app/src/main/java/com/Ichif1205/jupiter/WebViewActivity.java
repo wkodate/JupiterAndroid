@@ -35,7 +35,7 @@ public class WebViewActivity extends Activity {
     /**
      * 広告を表示するか否か.
      */
-    private static final boolean DISPLAY_AD = true;
+    private static final boolean DISPLAY_AD = false;
 
     /**
      * Asterisk.
