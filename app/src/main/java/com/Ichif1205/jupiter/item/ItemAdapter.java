@@ -47,37 +47,65 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
         RssItem rssItem = getItem(position);
         View view = convertView;
         if (getItemViewType(position) == 0) {
+            ViewHolderWithImage holder;
             if (null == view) {
                 view = layoutInflater.inflate(R.layout.item_layout_image,
                         parent, false);
+                holder = new ViewHolderWithImage(view);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolderWithImage) view.getTag();
             }
-            TextView titleView = (TextView) view.findViewById(R.id.title);
-            titleView.setText(rssItem.getTitle());
-            TextView rssTitleView = (TextView) view.findViewById(R.id.rssTitle);
-            rssTitleView.setText(rssItem.getRssTitle());
-            TextView dateView = (TextView) view.findViewById(R.id.date);
-            dateView.setText(rssItem.getDate());
-            ImageView imageView = (ImageView) view.findViewById(R.id.image);
-            imageView.setImageBitmap(rssItem.getImage());
+            holder.titleTextView.setText(rssItem.getTitle());
+            holder.rssTitleTextView.setText(rssItem.getRssTitle());
+            holder.dateTextView.setText(rssItem.getDate());
+            holder.imageView.setImageBitmap(rssItem.getImage());
         } else {
+            ViewHolderWithoutImage holder;
             if (null == view) {
                 view = layoutInflater.inflate(R.layout.item_layout, parent,
                         false);
+                holder = new ViewHolderWithoutImage(view);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolderWithoutImage) view.getTag();
             }
-            TextView titleView = (TextView) view.findViewById(R.id.title);
-            titleView.setText(rssItem.getTitle());
-            TextView rssTitleView = (TextView) view.findViewById(R.id.rssTitle);
-            rssTitleView.setText(rssItem.getRssTitle());
-            TextView dateView = (TextView) view.findViewById(R.id.date);
-            dateView.setText(rssItem.getDate());
+            holder.titleTextView.setText(rssItem.getTitle());
+            holder.rssTitleTextView.setText(rssItem.getRssTitle());
+            holder.dateTextView.setText(rssItem.getDate());
         }
         return view;
     }
 
+    private static class ViewHolderWithImage {
+        TextView titleTextView;
+        TextView rssTitleTextView;
+        TextView dateTextView;
+        ImageView imageView;
+
+        public ViewHolderWithImage(View view) {
+            this.titleTextView = (TextView) view.findViewById(R.id.title);
+            this.rssTitleTextView = (TextView) view.findViewById(R.id.rssTitle);
+            this.dateTextView = (TextView) view.findViewById(R.id.date);
+            this.imageView = (ImageView) view.findViewById(R.id.image);
+        }
+    }
+
+    private static class ViewHolderWithoutImage {
+        TextView titleTextView;
+        TextView rssTitleTextView;
+        TextView dateTextView;
+
+        public ViewHolderWithoutImage(View view) {
+            this.titleTextView = (TextView) view.findViewById(R.id.title);
+            this.rssTitleTextView = (TextView) view.findViewById(R.id.rssTitle);
+            this.dateTextView = (TextView) view.findViewById(R.id.date);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
-        RssItem item = getItem(position);
-        if (item.getImage() != null) {
+        if (getItem(position).getImage() != null) {
             return 0;
         }
         return 1;
