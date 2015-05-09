@@ -16,7 +16,6 @@ import java.util.List;
  * ItemAdapter.
  *
  * @author wkodate
- *
  */
 public class ItemAdapter extends ArrayAdapter<RssItem> {
 
@@ -31,15 +30,12 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
     private final LayoutInflater layoutInflater;
 
     /**
-     * @param context
-     *            コンテキスト.
-     * @param textViewResourceId
-     *            TextViewのID.
-     * @param objects
-     *            ListViewに表示するオブジェクト.
+     * @param context            コンテキスト.
+     * @param textViewResourceId TextViewのID.
+     * @param objects            ListViewに表示するオブジェクト.
      */
     public ItemAdapter(final Context context, final int textViewResourceId,
-            final List<RssItem> objects) {
+                       final List<RssItem> objects) {
         super(context, textViewResourceId, objects);
         layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -47,39 +43,49 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
 
     @Override
     public final View getView(final int position, final View convertView,
-            final ViewGroup parent) {
-        // この位置のアイテムを取得
-        RssItem itemData = getItem(position);
+                              final ViewGroup parent) {
+        RssItem rssItem = getItem(position);
         View view = convertView;
-        if (null == convertView) {
-            if (itemData.getImage() != null && !"".equals(itemData.getImage())) {
-                // 画像があるとき
+        if (getItemViewType(position) == 0) {
+            if (null == view) {
                 view = layoutInflater.inflate(R.layout.item_layout_image,
                         parent, false);
-            } else {
-                // 画像がないとき
+            }
+            TextView titleView = (TextView) view.findViewById(R.id.title);
+            titleView.setText(rssItem.getTitle());
+            TextView rssTitleView = (TextView) view.findViewById(R.id.rssTitle);
+            rssTitleView.setText(rssItem.getRssTitle());
+            TextView dateView = (TextView) view.findViewById(R.id.date);
+            dateView.setText(rssItem.getDate());
+            ImageView imageView = (ImageView) view.findViewById(R.id.image);
+            imageView.setImageBitmap(rssItem.getImage());
+        } else {
+            if (null == view) {
                 view = layoutInflater.inflate(R.layout.item_layout, parent,
                         false);
             }
-        }
-        if (itemData.getImage() != null && !"".equals(itemData.getImage())) {
             TextView titleView = (TextView) view.findViewById(R.id.title);
-            titleView.setText(itemData.getTitle());
+            titleView.setText(rssItem.getTitle());
             TextView rssTitleView = (TextView) view.findViewById(R.id.rssTitle);
-            rssTitleView.setText(itemData.getRssTitle());
-            ImageView imageView = (ImageView) view.findViewById(R.id.image);
-            imageView.setImageBitmap(itemData.getImage());
-            imageView.setImageBitmap(itemData.getImage());
-        } else {
-            // ItemDataをViewの各widgetにセットする
-            TextView titleView = (TextView) view.findViewById(R.id.title);
-            titleView.setText(itemData.getTitle());
-            TextView rssTitleView = (TextView) view.findViewById(R.id.rssTitle);
-            rssTitleView.setText(itemData.getRssTitle());
+            rssTitleView.setText(rssItem.getRssTitle());
             TextView dateView = (TextView) view.findViewById(R.id.date);
-            dateView.setText(itemData.getDate());
+            dateView.setText(rssItem.getDate());
         }
         return view;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        RssItem item = getItem(position);
+        if (item.getImage() != null) {
+            return 0;
+        }
+        return 1;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
     }
 
 }
