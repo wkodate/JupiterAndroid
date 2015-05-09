@@ -61,7 +61,7 @@ public class ItemJsonParser {
         rssItem.setRssTitle(json.getString(Constant.RSS_TITLE_FIELD));
         rssItem.setDate(json.getString(Constant.DATE_FIELD));
         //rssItem.setDescription(json.getString(Constant.DESC_FIELD));
-        //rssItem.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
+        rssItem.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
 
         return rssItem;
     }

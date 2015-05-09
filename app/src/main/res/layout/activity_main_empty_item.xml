@@ -4,14 +4,13 @@
     android:layout_height="fill_parent"
     android:background="#EEEEEE"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#EEEEEE"
         android:gravity="center"
-        android:text="@string/empty_item_message" >
-    </TextView>
+        android:text="@string/empty_item_message"></TextView>
 
 </LinearLayout>
