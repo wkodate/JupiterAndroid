@@ -1,6 +1,8 @@
 package com.Ichif1205.jupiter.item;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,9 @@ import java.util.List;
  */
 public class ItemAdapter extends ArrayAdapter<RssItem> {
 
-    /**
-     * ログ.
-     */
     private static final String TAG = "ItemAdapter";
+
+    private ImageCache imageCache;
 
     /**
      * LayoutInflater.
@@ -37,6 +38,7 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
     public ItemAdapter(final Context context, final int textViewResourceId,
                        final List<RssItem> objects) {
         super(context, textViewResourceId, objects);
+        this.imageCache = new ImageCache();
         layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -59,7 +61,13 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
             holder.titleTextView.setText(rssItem.getTitle());
             holder.rssTitleTextView.setText(rssItem.getRssTitle());
             holder.dateTextView.setText(rssItem.getDate());
-            holder.imageView.setImageBitmap(rssItem.getImage());
+            Bitmap image = imageCache.get(Integer.toString(position));
+            if (image == null) {
+                Log.d(TAG, "no cache: " + position);
+                image = rssItem.getImage();
+                imageCache.put(Integer.toString(position), image);
+            }
+            holder.imageView.setImageBitmap(image);
         } else {
             ViewHolderWithoutImage holder;
             if (null == view) {
