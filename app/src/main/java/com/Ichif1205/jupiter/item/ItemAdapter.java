@@ -1,8 +1,7 @@
 package com.Ichif1205.jupiter.item;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.Ichif1205.jupiter.R;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -22,8 +22,6 @@ import java.util.List;
 public class ItemAdapter extends ArrayAdapter<RssItem> {
 
     private static final String TAG = "ItemAdapter";
-
-    private ImageCache imageCache;
 
     /**
      * LayoutInflater.
@@ -38,7 +36,6 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
     public ItemAdapter(final Context context, final int textViewResourceId,
                        final List<RssItem> objects) {
         super(context, textViewResourceId, objects);
-        this.imageCache = new ImageCache();
         layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -61,13 +58,12 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
             holder.titleTextView.setText(rssItem.title);
             holder.rssTitleTextView.setText(rssItem.rssTitle);
             holder.dateTextView.setText(rssItem.date);
-            Bitmap image = imageCache.get(Integer.toString(position));
-            if (image == null) {
-                Log.d(TAG, "no cache: " + position);
-                image = rssItem.image;
-                imageCache.put(Integer.toString(position), image);
-            }
-            holder.imageView.setImageBitmap(image);
+            Glide.with(getContext())
+                    .load(rssItem.imageUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.loading_image)
+                    .crossFade()
+                    .into(holder.imageView);
         } else {
             ViewHolderWithoutImage holder;
             if (null == view) {
@@ -113,10 +109,10 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).image != null) {
-            return 0;
+        if (TextUtils.isEmpty(getItem(position).imageUrl)) {
+            return 1;
         }
-        return 1;
+        return 0;
     }
 
     @Override

@@ -21,9 +21,9 @@ public class RssItem {
     public String link;
 
     /**
-     * 画像.
+     * 画像URL.
      */
-    public Bitmap image;
+    public String imageUrl;
 
     /**
      * RSS元のタイトル.
