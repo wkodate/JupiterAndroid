@@ -147,9 +147,9 @@ public class MainActivity extends FragmentActivity implements
                 Log.d(TAG, "Call onItemClick.");
                 // position番目のItemDataを取得
                 RssItem item = itemDataList.get(position);
-                tracker.sendHit(item.getLink(), item.getRssTitle());
-                Intent webviewIntent = getWebviewIntent(item.getLink(),
-                        item.getTitle());
+                tracker.sendHit(item.link, item.rssTitle);
+                Intent webviewIntent = getWebviewIntent(item.link,
+                        item.title);
                 startActivity(webviewIntent);
             }
         });
