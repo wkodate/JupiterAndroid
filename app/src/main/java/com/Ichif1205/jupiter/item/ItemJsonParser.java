@@ -56,12 +56,12 @@ public class ItemJsonParser {
     private RssItem extractItemFields(JSONObject json) throws JSONException {
         RssItem rssItem = new RssItem();
 
-        rssItem.setLink(json.getString(Constant.LINK_FIELD));
-        rssItem.setTitle(json.getString(Constant.TITLE_FIELD));
-        rssItem.setRssTitle(json.getString(Constant.RSS_TITLE_FIELD));
-        rssItem.setDate(json.getString(Constant.DATE_FIELD));
-        //rssItem.setDescription(json.getString(Constant.DESC_FIELD));
-        rssItem.setImage(convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD)));
+        rssItem.link = json.getString(Constant.LINK_FIELD);
+        rssItem.title = json.getString(Constant.TITLE_FIELD);
+        rssItem.rssTitle = json.getString(Constant.RSS_TITLE_FIELD);
+        rssItem.date = json.getString(Constant.DATE_FIELD);
+        //rssItem.description(json.getString(Constant.DESC_FIELD));
+        rssItem.image = convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD));
 
         return rssItem;
     }

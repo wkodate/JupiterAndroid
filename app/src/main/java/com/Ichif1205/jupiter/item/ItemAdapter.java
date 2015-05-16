@@ -58,13 +58,13 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
             } else {
                 holder = (ViewHolderWithImage) view.getTag();
             }
-            holder.titleTextView.setText(rssItem.getTitle());
-            holder.rssTitleTextView.setText(rssItem.getRssTitle());
-            holder.dateTextView.setText(rssItem.getDate());
+            holder.titleTextView.setText(rssItem.title);
+            holder.rssTitleTextView.setText(rssItem.rssTitle);
+            holder.dateTextView.setText(rssItem.date);
             Bitmap image = imageCache.get(Integer.toString(position));
             if (image == null) {
                 Log.d(TAG, "no cache: " + position);
-                image = rssItem.getImage();
+                image = rssItem.image;
                 imageCache.put(Integer.toString(position), image);
             }
             holder.imageView.setImageBitmap(image);
@@ -78,9 +78,9 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
             } else {
                 holder = (ViewHolderWithoutImage) view.getTag();
             }
-            holder.titleTextView.setText(rssItem.getTitle());
-            holder.rssTitleTextView.setText(rssItem.getRssTitle());
-            holder.dateTextView.setText(rssItem.getDate());
+            holder.titleTextView.setText(rssItem.title);
+            holder.rssTitleTextView.setText(rssItem.rssTitle);
+            holder.dateTextView.setText(rssItem.date);
         }
         return view;
     }
@@ -113,7 +113,7 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).getImage() != null) {
+        if (getItem(position).image != null) {
             return 0;
         }
         return 1;
