@@ -2,6 +2,7 @@ package com.Ichif1205.jupiter.item;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.Ichif1205.jupiter.Constant;
 
@@ -22,10 +23,27 @@ import java.util.List;
  */
 public class ItemJsonParser {
 
-    private String json;
+    private static final String TAG = "ItemJsonParser";
+
+    private static final int IN_SAMPLE_SIZE = 2;
+
+    private static final Bitmap.Config IN_PREFERRED_CONFIG =  Bitmap.Config.RGB_565;
+
+    private String rssJson;
+
+    private BitmapFactory.Options bitmapOptions;
 
     public ItemJsonParser(String json) {
-        this.json = json;
+        this.rssJson = json;
+        this.bitmapOptions = createBitmapOptionsInstance();
+    }
+
+    private BitmapFactory.Options createBitmapOptionsInstance() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = IN_PREFERRED_CONFIG;
+        options.inSampleSize = IN_SAMPLE_SIZE;
+        options.inJustDecodeBounds = false;
+        return options;
     }
 
     /**
@@ -36,7 +54,7 @@ public class ItemJsonParser {
     public List<RssItem> parse() {
         JSONArray jsonArray;
         try {
-            jsonArray = new JSONArray(json);
+            jsonArray = new JSONArray(rssJson);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -73,14 +91,22 @@ public class ItemJsonParser {
      * @return Bitmap.
      */
     private Bitmap convertUrlToBitmap(final String urlStr) {
+        InputStream is = null;
         try {
-            InputStream is = new URL(urlStr).openStream();
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-            return bitmap;
+            is = new URL(urlStr).openStream();
+            return BitmapFactory.decodeStream(is, null, bitmapOptions);
         } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
             e.printStackTrace();
             return null;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
