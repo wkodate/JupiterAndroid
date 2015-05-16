@@ -2,6 +2,7 @@ package com.Ichif1205.jupiter.item;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.Ichif1205.jupiter.Constant;
@@ -79,7 +80,10 @@ public class ItemJsonParser {
         rssItem.rssTitle = json.getString(Constant.RSS_TITLE_FIELD);
         rssItem.date = json.getString(Constant.DATE_FIELD);
         //rssItem.description(json.getString(Constant.DESC_FIELD));
-        rssItem.image = convertUrlToBitmap(json.getString(Constant.IMAGE_FIELD));
+        String imageStr = json.getString(Constant.IMAGE_FIELD);
+        if (!TextUtils.isEmpty(imageStr)) {
+            rssItem.image = convertUrlToBitmap(imageStr);
+        }
 
         return rssItem;
     }
@@ -97,7 +101,6 @@ public class ItemJsonParser {
             return BitmapFactory.decodeStream(is, null, bitmapOptions);
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
-            e.printStackTrace();
             return null;
         } finally {
             if (is != null) {
