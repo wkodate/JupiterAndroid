@@ -1,6 +1,7 @@
 package com.Ichif1205.jupiter.item;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.Ichif1205.jupiter.R;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -19,9 +21,6 @@ import java.util.List;
  */
 public class ItemAdapter extends ArrayAdapter<RssItem> {
 
-    /**
-     * ログ.
-     */
     private static final String TAG = "ItemAdapter";
 
     /**
@@ -56,10 +55,15 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
             } else {
                 holder = (ViewHolderWithImage) view.getTag();
             }
-            holder.titleTextView.setText(rssItem.getTitle());
-            holder.rssTitleTextView.setText(rssItem.getRssTitle());
-            holder.dateTextView.setText(rssItem.getDate());
-            holder.imageView.setImageBitmap(rssItem.getImage());
+            holder.titleTextView.setText(rssItem.title);
+            holder.rssTitleTextView.setText(rssItem.rssTitle);
+            holder.dateTextView.setText(rssItem.date);
+            Glide.with(getContext())
+                    .load(rssItem.imageUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.loading_image)
+                    .crossFade()
+                    .into(holder.imageView);
         } else {
             ViewHolderWithoutImage holder;
             if (null == view) {
@@ -70,9 +74,9 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
             } else {
                 holder = (ViewHolderWithoutImage) view.getTag();
             }
-            holder.titleTextView.setText(rssItem.getTitle());
-            holder.rssTitleTextView.setText(rssItem.getRssTitle());
-            holder.dateTextView.setText(rssItem.getDate());
+            holder.titleTextView.setText(rssItem.title);
+            holder.rssTitleTextView.setText(rssItem.rssTitle);
+            holder.dateTextView.setText(rssItem.date);
         }
         return view;
     }
@@ -105,10 +109,10 @@ public class ItemAdapter extends ArrayAdapter<RssItem> {
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).getImage() != null) {
-            return 0;
+        if (TextUtils.isEmpty(getItem(position).imageUrl)) {
+            return 1;
         }
-        return 1;
+        return 0;
     }
 
     @Override
